@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Retro Punch — Starter</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="ui">
+        <div id="topbar">
+            <div class="p-info">
+                <div class="name"><span id="p1-name">P1</span></div>
+                <div class="bar">
+                    <div id="p1-bar" class="bar-fill"></div>
+                </div>
+                <div class="rounds" id="p1-rounds">○ ○ ○</div>
+            </div>
+            <div id="round-text">Round 1</div>
+            <div class="p-info">
+                <div class="name" style="text-align:right"><span id="p2-name">P2</span></div>
+                <div class="bar">
+                    <div id="p2-bar" class="bar-fill right"></div>
+                </div>
+                <div class="rounds" id="p2-rounds" style="text-align:right">○ ○ ○</div>
+            </div>
+        </div>
+
+        <canvas id="game"></canvas>
+
+    </div>
+
+    <script src="game.js"></script>
+</body>
+
+</html>
