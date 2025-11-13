@@ -521,7 +521,7 @@
         players[1].vx = 0; players[1].vy = 0; players[1].actionTimer = 0; players[1].currentMove = null; players[1].hurtTimer = 0; players[1].state = 'idle';
 
         // Timer
-        let roundTimer = ROUND_TIMER;
+        roundTimer = ROUND_TIMER;
         if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
         timerInterval = setInterval(() => {
             if (gameState !== 'fight' || roundOver) return;
@@ -615,7 +615,7 @@
         players[1].state = 'idle';
 
         // reset timer
-        let roundTimer = ROUND_TIMER;
+        roundTimer = ROUND_TIMER;
         if (timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => {
             if (gameState !== 'fight') return;
