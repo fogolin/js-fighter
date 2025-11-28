@@ -10,180 +10,93 @@
 }
 html,
 body {
-	height: 100%;
 	margin: 0;
-	background: linear-gradient(180deg, #0b1220, #05121a);
-	font-family: monospace;
+	overflow: hidden;
+	font-family: monospace, sans-serif;
+	text-transform: uppercase;
 	color: var(--text);
 }
+
 canvas {
-	width: 100%;
-	height: 100%;
 	display: block;
-	background: #5aa;
-	border: 0;
-	image-rendering: pixelated;
 }
 
-#ui {
+a {
+	text-decoration: none;
+	color: var(--accent);
+}
+
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.85);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 50;
+}
+
+.panel {
+	text-align: center;
+}
+
+.pixelated-element {
+	filter: url(#pixelate);
+}
+
+/* General utilities */
+.hidden {
+	display: none;
+}
+
+.wrapper {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	/* padding: 12px; */
-	/* gap: 10px; */
-}
-#topbar,
-#controls {
-	width: 100%;
-	max-width: calc(100% - 48px); /* optional */
-}
-#topbar {
-	margin-top: 12px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	background: rgba(0, 0, 0, 0.25);
-	padding: 12px;
-	border-radius: 6px;
-	position: absolute;
-}
-#round-text {
-	font-weight: 700;
-	color: var(--accent);
-	min-width: 120px;
-	text-align: center;
-}
-.p-info {
-	width: 360px;
-}
-.p-info .name {
-	font-size: 13px;
-	margin-bottom: 4px;
-}
-.p-info .bar {
-	height: 16px;
-	background: var(--bar-bg);
-	border: 2px solid #000;
-	border-radius: 3px;
-	position: relative;
-	overflow: hidden;
-}
-.bar-fill {
-	height: 100%;
-	background: var(--bar-p1);
-	width: 100%;
-}
-.bar-fill.right {
-	background: var(--bar-p2);
-	float: right;
-}
-.rounds {
-	font-size: 12px;
-	margin-top: 4px;
-	color: #ccc;
-}
-#controls {
-	width: 960px;
-	color: #ddd;
-	background: rgba(0, 0, 0, 0.15);
-	padding: 6px;
-	border-radius: 6px;
-	text-align: center;
-	font-size: 13px;
 }
 
-/* Title and select overlays */
+/* Overlay */
 .overlay {
-	position: absolute;
-	inset: 0;
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	pointer-events: none;
-}
-.panel {
-	pointer-events: auto;
-	background: rgba(0, 0, 0, 0.55);
-	border: 2px solid #000;
-	border-radius: 8px;
-	padding: 18px;
-	color: #fff;
-	width: 680px;
-}
-.panel h1 {
-	margin: 0 0 10px 0;
-	font-size: 24px;
-	color: #fff;
-}
-.panel h2 {
-	margin: 8px 0;
-	font-size: 18px;
-	color: var(--accent);
-}
-.panel p,
-.panel li {
-	font-size: 14px;
-	color: #e6e6e6;
-}
-.option-grid {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 8px;
-	margin-top: 10px;
-}
-.option {
-	background: #1b213a;
-	border: 2px solid #000;
-	border-radius: 6px;
-	padding: 8px;
-	cursor: pointer;
-}
-.option.selected {
-	outline: 2px solid var(--accent);
 }
 
-.win-text {
-	position: absolute;
-	left: 50%;
-	top: 40%;
-	transform: translate(-50%, -50%);
-	font-size: 48px;
-	color: #fff;
-	text-shadow: 0 0 12px #f25;
-	animation: win-pop 0.9s ease-out forwards;
+/* Title screen */
+.logo {
+	width: 400px;
+	margin-bottom: 20px;
 }
-@keyframes win-pop {
-	0% {
-		transform: translate(-50%, -50%) scale(0.4);
-		opacity: 0;
-	}
-	60% {
-		transform: translate(-50%, -50%) scale(1.2);
-		opacity: 1;
-	}
-	100% {
-		transform: translate(-50%, -50%) scale(1);
-		opacity: 1;
-	}
+
+.title {
+	color: #ffcc00;
+	font-size: 4em;
+	/* text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff, 1px 1px #fff,
+		-1px -1px #fff, 1px -1px #fff, -1px 1px #fff, 0px 6px #d00; */
+	margin-bottom: 10px;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+	font-variation-settings: "BLED" 0, "SCAN" 0;
 }
-.confetti {
-	position: absolute;
-	width: 6px;
-	height: 12px;
-	background: #f25;
-	opacity: 0.9;
-	animation: confetti-fall 1.2s linear forwards;
+
+.insertCoin {
+	font-size: 2em;
 }
-@keyframes confetti-fall {
-	0% {
-		transform: translateY(-40px) rotate(0deg);
-		opacity: 0;
-	}
-	20% {
-		opacity: 1;
-	}
-	100% {
-		transform: translateY(140px) rotate(260deg);
+
+.footer {
+	font-size: 2em;
+	margin-top: 20px;
+}
+
+/* Animations */
+.blink {
+	animation: blink 1s infinite;
+}
+
+@keyframes blink {
+	50% {
 		opacity: 0;
 	}
 }
