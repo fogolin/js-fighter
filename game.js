@@ -867,7 +867,7 @@ function game() {
         gameState = 'title';
         panel.innerHTML = `
         <div class="wrapper">
-            <img src="assets/logo.png" class="logo"/>
+            <img src="assets/images/logo.png" class="logo"/>
             <h1 class="hidden">${texts.titleScreen.title}</h1>
             <h2 class="title tiny5">${texts.titleScreen.subtitle}</h2>
             <p class="insertCoin tiny5 blink">${texts.titleScreen.insertCoin}</p>
