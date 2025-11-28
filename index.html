@@ -3,36 +3,57 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Retro Punch — Starter</title>
+    <title>Retro Punch II</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <link rel="stylesheet" href="style.css" />
+    <!-- <link rel="stylesheet" href="./style/style.css" /> -->
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+            font-family: sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .panel {
+            text-align: center;
+            color: #fff;
+        }
+
+        /* .pixelated-element {
+            filter: url(#pixelate);
+        } */
+    </style>
 </head>
 
 <body>
-    <div id="ui">
-        <div id="topbar">
-            <div class="p-info">
-                <div class="name"><span id="p1-name">P1</span></div>
-                <div class="bar">
-                    <div id="p1-bar" class="bar-fill"></div>
-                </div>
-                <div class="rounds" id="p1-rounds">○ ○ ○</div>
-            </div>
-            <div id="round-text">Round 1</div>
-            <div class="p-info">
-                <div class="name" style="text-align:right"><span id="p2-name">P2</span></div>
-                <div class="bar">
-                    <div id="p2-bar" class="bar-fill right"></div>
-                </div>
-                <div class="rounds" id="p2-rounds" style="text-align:right">○ ○ ○</div>
-            </div>
-        </div>
-
-        <canvas id="game"></canvas>
-
-    </div>
-
+    <canvas id="game" class="pixelated-element"></canvas>
     <script src="game.js"></script>
+
+    <svg>
+        <filter id="pixelate" x="0" y="0">
+            <feFlood x="3" y="3" height="3" width="3" />
+            <feComposite width="6" height="6" />
+            <feTile result="a" />
+            <feComposite in="SourceGraphic" in2="a" operator="in" />
+            <feMorphology operator="dilate" radius="3" />
+    </svg>
 </body>
 
 </html>
