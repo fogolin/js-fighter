@@ -6,7 +6,7 @@ const langague = {
             title: "Grupon Fighter",
             subtitle: "A capivara gritante",
             insertCoin: "Inserir ficha para começar",
-            footer: "co.,ltd"
+            footer: "co.,ltd. 2025"
         }
     }
 }
@@ -615,7 +615,14 @@ function game() {
     }
 
     // --- GAME LOOP & LOGIC ---
-    function startFight() {
+    async function startFight() {
+        // Load fight assets
+        gameState = 'loading';
+
+        // Load assets
+        await loadStageAssets(selected.stage);
+
+        // Start fight
         gameState = 'fight';
 
         // Setup Players
@@ -686,7 +693,7 @@ function game() {
         destroyHUD();
         triggerSplash('WIN', 'WINNER!', winner.def.name);
         setTimeout(() => {
-            showSelect();
+            showFighterSelect();
         }, 4000);
     }
 
@@ -775,6 +782,13 @@ function game() {
         ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
+        // State check
+        // If we are in the menu/title, do NOT render the game world.
+        // Just clear to black to save resources. The HTML overlay handles the UI.
+        if (gameState !== 'fight' && gameState !== 'matchWin') {
+            return; // STOP HERE - Do not calculate parallax or sprites
+        }
+
         // Camera
         let camX = WIDTH / 2;
         if (players.length === 2) {
@@ -782,17 +796,24 @@ function game() {
         }
 
         // Stage
-        const stage = stages[selected.stage] || stages.cafe;
-        loadStageAssets(selected.stage);
+        const stage = stages[selected.stage] || stages[0];
+        // loadStageAssets(selected.stage);
         stage.layers.forEach(l => {
             const off = (camX * l.scroll) % WIDTH;
-            // Draw Color Background (Fallback or Tint)
-            ctx.fillStyle = l.color;
-            // We fill the whole width twice to handle the scroll wrap
-            ctx.fillRect(-off, l.y, WIDTH, HEIGHT);
-            ctx.fillRect(-off + WIDTH, l.y, WIDTH, HEIGHT);
+
+            // First render colors, cheaper in resources
+            if (l.color) {
+                // Draw Color Background (Fallback or Tint)
+                ctx.fillStyle = l.color;
+                // We fill the whole width twice to handle the scroll wrap
+                ctx.fillRect(-off, l.y, WIDTH, HEIGHT);
+                ctx.fillRect(-off + WIDTH, l.y, WIDTH, HEIGHT);
+            }
 
             // Determine Image to Draw
+            // Draw Image (ONLY if pre-loaded)
+            // CRITICAL: We use l.imgElement, which is the loaded Object.
+            // We NEVER create 'new Image()' here.
             let imgToDraw = null;
 
             if (l.frames && l.frames.length > 0) {
@@ -801,12 +822,15 @@ function game() {
                 // Use global time to determine frame index
                 const frameIndex = Math.floor(last / 1000 / speed) % l.frames.length;
                 imgToDraw = l.frames[frameIndex];
-            } else if (l.imgElement) {
+            }
+            // Handle Static (Single pre-loaded image)
+            else if (l.imgElement) {
                 // Handle Static
                 imgToDraw = l.imgElement;
             }
 
             // Draw Image (Parallax Repeat)
+            // Only draw if we actually have the asset in RAM
             if (imgToDraw) {
                 // Draw first copy
                 // Assumes image is designed to fill WIDTH. 
@@ -824,6 +848,7 @@ function game() {
 
         // Players
         // Sort by Y so lower player is in front
+        // Optimization: Don't create new arrays if possible, but sorting 2 items is negligible
         const sorted = [...players].sort((a, b) => a.y - b.y);
         sorted.forEach(p => p.draw(ctx));
 
@@ -862,76 +887,215 @@ function game() {
     let titleHandler = null;
     let selectHandler = null;
 
+    let currentInputHandler = null;
+    function setInputHandler(fn) {
+        if (currentInputHandler) window.removeEventListener('keydown', currentInputHandler);
+        currentInputHandler = fn;
+        window.addEventListener('keydown', currentInputHandler);
+    }
+
     function showTitle() {
         destroyHUD();
         gameState = 'title';
         panel.innerHTML = `
-        <div class="wrapper">
-            <img src="assets/images/logo.png" class="logo"/>
-            <h1 class="hidden">${texts.titleScreen.title}</h1>
-            <h2 class="title tiny5">${texts.titleScreen.subtitle}</h2>
-            <p class="insertCoin tiny5 blink">${texts.titleScreen.insertCoin}</p>
-            <p class="footer tiny5"><a href="https://fogol.in/?referral=grupon-fighter" target="_blank">@fogol.in</a> ${texts.titleScreen.footer}.</p>
-        </div>
+        <img src="assets/images/logo.png" class="logo"/>
+        <h1 class="hidden">${texts.titleScreen.title}</h1>
+        <h2 class="title data-content="${texts.titleScreen.subtitle}">${texts.titleScreen.subtitle}</h2>
+        <p class="splash-default insertCoin blink">${texts.titleScreen.insertCoin}</p>
+        <p class="splash-default footer"><span class="jersey10">©</span> <a href="https://fogol.in/?referral=grupon-fighter" target="_blank">fogol.in</a> ${texts.titleScreen.footer}.</p>
         `;
-
-        titleHandler = (e) => {
-            if (e.key === 'Enter') {
-                window.removeEventListener('keydown', titleHandler);
-                showSelect();
-            }
-        };
-        window.addEventListener('keydown', titleHandler);
-    }
-
-    function showSelect() {
-        gameState = 'select';
+        // Show the content after loaded
         overlay.style.display = 'flex';
 
-        const makeOpts = (obj, type) => Object.keys(obj).map(k =>
-            `<div class="option ${selected[type] === k ? 'selected' : ''}" data-k="${k}" onclick="window.selectOpt('${type}', '${k}')">${obj[k].name}</div>`
-        ).join('');
+        setInputHandler((e) => {
+            if (e.key === 'Enter') {
+                showFighterSelect();
+            }
+        });
+    }
+
+    function showFighterSelect() {
+        gameState = 'select-fighter';
+        overlay.style.display = 'flex';
+
+        const charKeys = Object.keys(characters);
+
+        // Helper: Find current index
+        const getIdx = (side) => charKeys.indexOf(selected[side]);
+
+        // Helper: Generate Character UI
+        const makeCharOpts = (playerSide) => charKeys.map((k, i) => {
+            const isSelected = selected[playerSide] === k;
+            // Add a marker (P1/P2) to show who is hovering
+            const marker = isSelected ? `<div style="position:absolute; top:-10px; left:0; width:100%; background:${playerSide === 'p1' ? '#6ad' : '#da8'}; color:#000; font-size:10px; font-weight:bold">${playerSide.toUpperCase()}</div>` : '';
+
+            return `
+            <div class="char-card ${isSelected ? 'selected' : ''}" 
+                 style="position:relative"
+                 onclick="window.selectChar('${playerSide}', '${k}')">
+                ${marker}
+                <div style="width:100%; height:60px; background:${isSelected ? '#444' : '#222'}; display:flex; align-items:center; justify-content:center; font-size:30px">
+                     ${k.substring(0, 1).toUpperCase()}
+                </div>
+                <div style="padding:5px; font-weight:bold; font-size:12px">${characters[k].name}</div>
+            </div>`;
+        }).join('');
 
         panel.innerHTML = `
-            <h2>SELECT FIGHTER</h2>
-            <div style="display:flex; gap:20px; justify-content:center; margin-bottom:20px">
-                <div>
-                    <h3>P1</h3>
-                    <div id="p1-opts" class="opt-grid">${makeOpts(characters, 'p1')}</div>
+            <h2 style="color:#fff; text-transform:uppercase; letter-spacing:2px">Select Fighters</h2>
+            
+            <div style="display:flex; justify-content:center; gap:40px; margin-bottom:10px; text-align:left">
+                <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:8px; border:1px solid #444">
+                    <h3 style="color:#6ad; margin-top:0; border-bottom:1px solid #6ad; padding-bottom:5px">PLAYER 1 <span style="font-size:10px; color:#fff; float:right; margin-top:5px">A / D</span></h3>
+                    <div class="grid-2">${makeCharOpts('p1')}</div>
                 </div>
-                <div>
-                    <h3>P2 <button id="ai-toggle" style="background:${p2IsAI ? '#f00' : '#444'}; color:#fff; border:none; padding:4px 8px; cursor:pointer" onclick="window.toggleAI()">CPU: ${p2IsAI ? 'ON' : 'OFF'}</button></h3>
-                    <div id="p2-opts" class="opt-grid">${makeOpts(characters, 'p2')}</div>
+
+                <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:8px; border:1px solid #444">
+                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #da8; padding-bottom:5px; margin-bottom:15px">
+                        <h3 style="color:#da8; margin:0">PLAYER 2</h3>
+                        <span style="font-size:10px; color:#fff">Arrows</span>
+                    </div>
+                    <div class="grid-2">${makeCharOpts('p2')}</div>
+                    
+                    <div style="margin-top:15px; text-align:center">
+                        <div style="font-size:12px; margin-bottom:5px; color:#aaa">OPPONENT MODE (Space)</div>
+                        <button onclick="window.toggleAI()" style="width:100%; padding:8px; background:${p2IsAI ? '#d00' : '#444'}; color:#fff; border:none; font-weight:bold; cursor:pointer">
+                            ${p2IsAI ? 'CPU' : 'HUMAN'}
+                        </button>
+                    </div>
                 </div>
             </div>
-            <h3>SELECT STAGE</h3>
-            <div id="stage-opts" class="opt-grid" style="display:flex; justify-content:center; gap:10px">${makeOpts(stages, 'stage')}</div>
-            <p style="margin-top:20px">PRESS ENTER TO FIGHT</p>
+
+            <p class="blink" style="margin-top:20px; color:#aaa">PRESS <strong style="color:#fff">ENTER</strong> TO CONFIRM</p>
+
             <style>
-                .opt-grid .option { padding: 10px; background: #333; margin: 4px; cursor: pointer; border: 2px solid #555; }
-                .opt-grid .option.selected { background: #f00; border-color: #fff; }
+                .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+                .char-card { border: 2px solid #333; cursor: pointer; transition: 0.1s; text-align: center; width: 80px; }
+                .char-card.selected { border-color: #fff; transform: scale(1.05); z-index:10; box-shadow:0 0 10px rgba(0,0,0,0.5); }
+                .blink { animation: blink 1s infinite; }
             </style>
         `;
 
-        // Global handlers for HTML string clicks
-        window.selectOpt = (type, k) => {
-            selected[type] = k;
-            showSelect(); // Re-render to update classes
+        // Logic to cycle index safely
+        const cycle = (current, dir) => {
+            let next = current + dir;
+            if (next < 0) next = charKeys.length - 1;
+            if (next >= charKeys.length) next = 0;
+            return charKeys[next];
         };
 
-        window.toggleAI = () => {
-            p2IsAI = !p2IsAI;
-            showSelect();
-        };
+        // Standard helpers for mouse clicks
+        window.selectChar = (side, key) => { selected[side] = key; showFighterSelect(); };
+        window.toggleAI = () => { p2IsAI = !p2IsAI; showFighterSelect(); };
 
-        titleHandler = (e) => {
+        // KEYBOARD HANDLER
+        setInputHandler((e) => {
+            const k = e.key.toLowerCase();
+            let update = false;
+
+            // Player 1 Controls (A / D)
+            if (k === 'a') {
+                selected.p1 = cycle(getIdx('p1'), -1);
+                update = true;
+            } else if (k === 'd') {
+                selected.p1 = cycle(getIdx('p1'), 1);
+                update = true;
+            }
+
+            // Player 2 Controls (Arrows)
+            if (e.key === 'ArrowLeft') {
+                selected.p2 = cycle(getIdx('p2'), -1);
+                update = true;
+            } else if (e.key === 'ArrowRight') {
+                selected.p2 = cycle(getIdx('p2'), 1);
+                update = true;
+            }
+
+            // Toggle AI
+            if (e.key === ' ') { // Space
+                p2IsAI = !p2IsAI;
+                update = true;
+            }
+
+            // Navigation
             if (e.key === 'Enter') {
-                window.removeEventListener('keydown', titleHandler);
+                showStageSelect();
+                return;
+            }
+
+            if (update) showFighterSelect();
+        });
+    }
+
+    // --- SCREEN 2: STAGE SELECT ---
+    function showStageSelect() {
+        gameState = 'select-stage';
+
+        const stageKeys = Object.keys(stages);
+        const currentIdx = stageKeys.indexOf(selected.stage);
+
+        const makeStageOpts = () => stageKeys.map((k, i) => {
+            const isSelected = selected.stage === k;
+            // Visual scale effect for selected stage
+            const scale = isSelected ? 'transform: scale(1.1); border-color: #ffcc00; z-index:10; box-shadow:0 0 20px #ffcc00' : 'transform: scale(0.9); opacity: 0.6; border-color: #444';
+
+            return `
+            <div class="stage-card" onclick="window.selectStage('${k}')" style="${scale}">
+                <div style="height:100px; background:${stages[k].layers[0].color}; display:flex; align-items:center; justify-content:center; color:#fff; text-shadow:1px 1px 0 #000; font-weight:bold; font-size:18px">
+                    ${stages[k].name}
+                </div>
+            </div>`;
+        }).join('');
+
+        panel.innerHTML = `
+            <h2 style="color:#fff; text-transform:uppercase; letter-spacing:2px">Select Stage</h2>
+            
+            <div style="display:flex; justify-content:center; align-items:center; gap:10px; height: 160px; perspective: 1000px;">
+                ${makeStageOpts()}
+            </div>
+
+            <div style="margin-top:20px">
+                <p style="color:#aaa; font-size:14px"> < A / D > or < Arrows > to switch</p>
+                <p class="blink" style="margin-top:20px; font-size:20px">PRESS <strong style="color:#fff">ENTER</strong> TO FIGHT</p>
+            </div>
+
+            <style>
+                .stage-card { width: 200px; border: 4px solid #444; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); background:#000; }
+                .blink { animation: blink 1s infinite; }
+            </style>
+        `;
+
+        window.selectStage = (key) => { selected.stage = key; showStageSelect(); };
+
+        // KEYBOARD HANDLER
+        setInputHandler((e) => {
+            const k = e.key.toLowerCase();
+            let nextIdx = currentIdx;
+
+            // Allow both WASD and Arrows
+            if (k === 'a' || e.key === 'ArrowLeft') {
+                nextIdx--;
+            } else if (k === 'd' || e.key === 'ArrowRight') {
+                nextIdx++;
+            }
+
+            // Wrap around
+            if (nextIdx < 0) nextIdx = stageKeys.length - 1;
+            if (nextIdx >= stageKeys.length) nextIdx = 0;
+
+            if (nextIdx !== currentIdx) {
+                selected.stage = stageKeys[nextIdx];
+                showStageSelect();
+            }
+
+            if (e.key === 'Enter') {
                 overlay.style.display = 'none';
                 startFight();
             }
-        };
-        window.addEventListener('keydown', titleHandler);
+            if (e.key === 'Escape') {
+                showFighterSelect();
+            }
+        });
     }
 
     // --- UTILS ---
