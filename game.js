@@ -616,6 +616,9 @@ function game() {
 
     // --- GAME LOOP & LOGIC ---
     async function startFight() {
+        // Kill the Menu Listener so it doesn't interfere with game controls
+        clearInputHandler();
+
         // Load fight assets
         gameState = 'loading';
 
@@ -892,6 +895,14 @@ function game() {
         if (currentInputHandler) window.removeEventListener('keydown', currentInputHandler);
         currentInputHandler = fn;
         window.addEventListener('keydown', currentInputHandler);
+    }
+
+    // Removes the menu listener completely
+    function clearInputHandler() {
+        if (currentInputHandler) {
+            window.removeEventListener('keydown', currentInputHandler);
+            currentInputHandler = null;
+        }
     }
 
     function showTitle() {
