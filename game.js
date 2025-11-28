@@ -1,15 +1,26 @@
 // Retro Punch - Enhanced
-// Features:
-// - Dynamic HUD (created/destroyed on fly)
-// - Slow Motion KO
-// - AI Opponent Toggle
-// - Canvas Text Overlays (Round, KO, Wins)
 
-(() => {
+const langague = {
+    pt: {
+        titleScreen: {
+            title: "Grupon Fighter",
+            subtitle: "A capivara gritante",
+            insertCoin: "Inserir ficha para começar",
+            footer: "co.,ltd"
+        }
+    }
+}
+
+function game() {
     // --- CONFIGURATION ---
     const ROUNDS_TO_WIN = 3; // Best of 3
     const ROUND_DURATION = 10; // Seconds
     const MAX_HEALTH = 100;
+
+    // --- LANGUAGE ---
+    // TODO: add language selection
+    let lang = "pt";
+    const texts = langague[lang];
 
     // --- GLOBAL STATE ---
     const FLOOR_RATIO = 0.78;
@@ -58,15 +69,43 @@
         });
     }
 
+    // Load specific stage assets
+    async function loadStageAssets(stageKey) {
+        const stage = stages[stageKey];
+        if (!stage) return;
+
+        const promises = stage.layers.map(async (layer) => {
+            // If it's an array (Animation)
+            if (Array.isArray(layer.src)) {
+                layer.frames = await Promise.all(layer.src.map(s => loadImage('layerImage', s)));
+            }
+            // If it's a string (Static)
+            else if (typeof layer.src === 'string' && layer.src.length > 0) {
+                layer.imgElement = await loadImage('layerImage', layer.src);
+            }
+        });
+
+        await Promise.all(promises);
+    }
+
     // Parallax stage definitions
+    // The further the layer, the closer it is to the players
     const stages = {
         cafe: {
-            name: "Esplanada",
+            name: "Café",
             layers: [
-                { img: "", color: "#0a0f1a", y: 0, scroll: 0.1 },
-                { img: "", color: "#1a2033", y: 120, scroll: 0.2 },
-                { img: "", color: "#24324a", y: 220, scroll: 0.4 },
-                { img: "", color: "#304a5a", y: 320, scroll: 0.7 },
+                {
+                    src: ["./assets/bg.jpg", "./assets/bg2.jpg"],
+                    animSpeed: 0.5, // Seconds per frame
+                    color: "#0a0f1a", y: 0, scroll: 0.1
+                },
+                { color: "#1a2033", y: 120, scroll: 0.2 },
+                { color: "#24324a", y: 220, scroll: 0.4 },
+                {
+                    color: "#304a5a",
+                    y: 320,
+                    scroll: 0.7
+                },
             ],
             floorColor: "#2a2318"
         },
@@ -744,12 +783,41 @@
 
         // Stage
         const stage = stages[selected.stage] || stages.cafe;
+        loadStageAssets(selected.stage);
         stage.layers.forEach(l => {
             const off = (camX * l.scroll) % WIDTH;
+            // Draw Color Background (Fallback or Tint)
             ctx.fillStyle = l.color;
+            // We fill the whole width twice to handle the scroll wrap
             ctx.fillRect(-off, l.y, WIDTH, HEIGHT);
             ctx.fillRect(-off + WIDTH, l.y, WIDTH, HEIGHT);
+
+            // Determine Image to Draw
+            let imgToDraw = null;
+
+            if (l.frames && l.frames.length > 0) {
+                // Handle Animation
+                const speed = l.animSpeed || 0.2;
+                // Use global time to determine frame index
+                const frameIndex = Math.floor(last / 1000 / speed) % l.frames.length;
+                imgToDraw = l.frames[frameIndex];
+            } else if (l.imgElement) {
+                // Handle Static
+                imgToDraw = l.imgElement;
+            }
+
+            // Draw Image (Parallax Repeat)
+            if (imgToDraw) {
+                // Draw first copy
+                // Assumes image is designed to fill WIDTH. 
+                // If your images are smaller/tiled, you might need a loop here.
+                ctx.drawImage(imgToDraw, -off, l.y, WIDTH, imgToDraw.height * (WIDTH / imgToDraw.width));
+
+                // Draw second copy for wrapping
+                ctx.drawImage(imgToDraw, -off + WIDTH, l.y, WIDTH, imgToDraw.height * (WIDTH / imgToDraw.width));
+            }
         });
+
         // Floor
         ctx.fillStyle = stage.floorColor;
         ctx.fillRect(0, FLOOR, WIDTH, HEIGHT - FLOOR);
@@ -798,11 +866,14 @@
         destroyHUD();
         gameState = 'title';
         panel.innerHTML = `
-            <h1 style="color:#ffcc00; font-size:60px; text-shadow:4px 4px #d00; margin-bottom:10px">RETRO PUNCH</h1>
-            <p style="font-size:20px; color:#fff; animation: blink 1s infinite">PRESS ENTER TO START</p>
-            <style>@keyframes blink{50%{opacity:0}}</style>
+        <div class="wrapper">
+            <img src="assets/logo.png" class="logo"/>
+            <h1 class="hidden">${texts.titleScreen.title}</h1>
+            <h2 class="title tiny5">${texts.titleScreen.subtitle}</h2>
+            <p class="insertCoin tiny5 blink">${texts.titleScreen.insertCoin}</p>
+            <p class="footer tiny5"><a href="https://fogol.in/?referral=grupon-fighter" target="_blank">@fogol.in</a> ${texts.titleScreen.footer}.</p>
+        </div>
         `;
-        overlay.style.display = 'flex';
 
         titleHandler = (e) => {
             if (e.key === 'Enter') {
@@ -892,15 +963,12 @@
 
     // Initialize game
     async function init() {
-        // Optional image loads (you can place files and switch to image rendering later)
-        await Promise.all([
-            loadImage('alex', 'assets/alex.png'),
-            loadImage('beth', 'assets/beth.png')
-        ]);
         showTitle();
         loop();
     }
 
     init();
+}
 
-})();
+// Start the game
+game();
