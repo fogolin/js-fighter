@@ -1,8 +1,19 @@
 :root {
-	--bg: #0a1120;
-	--ui: #13152a;
+	--bg: rgb(6, 11, 22);
+	--ui: rgb(19, 21, 42);
 	--accent: #f25;
+
+	--title-gradient-start: #5c92ed;
+	--title-gradient-end: #eeffee;
+	--title-border: rgb(9, 10, 46);
+	--title-shadow: rgb(34, 38, 255);
+
 	--text: #efe;
+	--text-gradient-start: #ebb706;
+	--text-gradient-end: #f65d00;
+	--text-border: rgb(9, 10, 46);
+	--text-shadow: rgb(12, 14, 148);
+
 	--bar-bg: #333a;
 	--bar-p1: #4ad04a;
 	--bar-p2: #4ad04a;
@@ -26,22 +37,26 @@ a {
 	color: var(--accent);
 }
 
+/* Overlay */
 .overlay {
 	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(0, 0, 0, 0.85);
+	background: var(--bg);
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	font-family: "Tiny 5", monospace, sans-serif;
 	z-index: 50;
 }
 
 .panel {
 	text-align: center;
 }
+
+/* Stylized content */
 
 .pixelated-element {
 	filter: url(#pixelate);
@@ -52,51 +67,59 @@ a {
 	display: none;
 }
 
-.wrapper {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-/* Overlay */
-.overlay {
-	display: flex;
-}
-
 /* Title screen */
 .logo {
-	width: 400px;
-	margin-bottom: 20px;
+	width: 30em;
+	margin-bottom: 1.1em;
 }
 
 .title {
-	color: #ffcc00;
+	/* color: #ffcc00; */
+	background: var(--title-gradient-start);
+	background: linear-gradient(
+		to bottom,
+		var(--title-gradient-start) 0%,
+		var(--title-gradient-end) 100%
+	);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	-webkit-text-stroke: 1px var(--title-border);
+	filter: drop-shadow(0px 4px var(--title-shadow));
+
 	font-size: 4em;
-	/* text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff, 1px 1px #fff,
-		-1px -1px #fff, 1px -1px #fff, -1px 1px #fff, 0px 6px #d00; */
-	margin-bottom: 10px;
-	font-optical-sizing: auto;
 	font-weight: 400;
-	font-style: normal;
-	font-variation-settings: "BLED" 0, "SCAN" 0;
+	font-family: "Jersey 15", monospace, sans-serif;
+
+	margin-bottom: 1.1em;
 }
 
-.insertCoin {
-	font-size: 2em;
+/* .title::after {
+	content: attr(data-content);
+	position: absolute;
+	inset: 0 0 0 0;
+	filter: drop-shadow(0px 4px red);
+} */
+
+.splash-default {
+	font-size: 1.5em;
+
+	background: var(--text-gradient-start);
+	background: linear-gradient(
+		to bottom,
+		var(--text-gradient-start) 0%,
+		var(--text-gradient-end) 100%
+	);
+	background-clip: text;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	filter: drop-shadow(2px 4px var(--text-shadow));
 }
 
-.footer {
-	font-size: 2em;
-	margin-top: 20px;
-}
+/* .insertCoin {
+	font-size: 2.5em;
+} */
 
-/* Animations */
-.blink {
-	animation: blink 1s infinite;
-}
-
-@keyframes blink {
-	50% {
-		opacity: 0;
-	}
-}
+/* .footer {
+	font-size: 1.5em;
+} */
