@@ -1,3 +1,6 @@
+@import "fonts.css";
+@import "animations.css";
+
 :root {
 	--bg: rgb(6, 11, 22);
 	--ui: rgb(19, 21, 42);
