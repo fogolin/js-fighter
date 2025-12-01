@@ -7,6 +7,35 @@ const langague = {
             subtitle: "A capivara gritante",
             insertCoin: "Inserir ficha para começar",
             footer: "co.,ltd. 2025"
+        },
+        characterSelection: {
+            title: "Selecione os lutadores",
+            subtitle: "< A / D > ou < Setas > para mudar",
+            player: "Jogador",
+            instructions: {
+                p1: "A / D",
+                p2: "Setas",
+                continue: "Pressione ENTER para confirmar"
+            },
+            oponent: {
+                mode: "Tipo de adversário (Espaço)",
+                human: "Humano",
+                ai: "CPU"
+            }
+        },
+        stageSelection: {
+            title: "Selecione a fase",
+            subtitle: "< A / D > ou < Setas > para mudar",
+            pressEnter: "Pressione <strong>ENTER</strong> para lutar!",
+        },
+        hud: {
+            fight: "Lutem!",
+            round: "Rodada",
+            ko: "K.O.",
+            win: "Vitória!",
+            wins: "vence!",
+            draw: "Empate",
+            timeOver: "Tempo esgotado!"
         }
     }
 }
@@ -14,7 +43,7 @@ const langague = {
 function game() {
     // --- CONFIGURATION ---
     const ROUNDS_TO_WIN = 3; // Best of 3
-    const ROUND_DURATION = 10; // Seconds
+    const ROUND_DURATION = 90; // Seconds
     const MAX_HEALTH = 100;
 
     // --- LANGUAGE ---
@@ -188,28 +217,24 @@ function game() {
         hud = document.createElement('div');
         hud.id = 'game-hud';
         // Inline styles for simplicity, can be moved to CSS
-        hud.style.cssText = `position:fixed; left:50%; top:10px; transform:translateX(-50%); width:min(1200px, 94%); z-index:100; pointer-events:none; font-family:monospace; color:white; display:flex; justify-content:space-between; align-items:flex-start; text-shadow:2px 2px 0 #000;`;
+
+        const hudPlayer = (playerSide) => {
+            playerSide === 'p1' ? 'Left' : 'Right';
+            return `<div class="container ${playerSide === 'p2' ? 'right' : ''}">
+                <div class="name" id="hud-${playerSide}-name">${selected[playerSide]} (${playerSide})</div>
+                <div class="health-bar">
+                    <div id="hud-${playerSide}-bar"></div>
+                </div>
+                <div id="hud-${playerSide}-wins" class="fights-won">● ○</div>
+            </div>`
+        }
 
         hud.innerHTML = `
-            <div style="width:40%">
-                <div id="hud-p1-name" style="font-size:20px; font-weight:bold; margin-bottom:4px">P1</div>
-                <div style="height:20px; background:rgba(0,0,0,0.5); border:2px solid #fff; border-radius:4px; overflow:hidden relative">
-                    <div id="hud-p1-bar" style="height:100%; width:100%; background:#ffcc00; transition:width 0.1s"></div>
-                </div>
-                <div id="hud-p1-wins" style="margin-top:4px; font-size:16px; color:#aaa">● ○</div>
+            ${hudPlayer('p1')}
+            <div class="timer">
+                <div id="hud-timer">99</div>
             </div>
-            
-            <div style="text-align:center; padding:0 20px">
-                <div style="font-size:24px; font-weight:bold; color:#f00; background:#000; padding:2px 10px; border-radius:4px; border:1px solid #444" id="hud-timer">99</div>
-            </div>
-
-            <div style="width:40%; text-align:right">
-                <div id="hud-p2-name" style="font-size:20px; font-weight:bold; margin-bottom:4px">P2</div>
-                <div style="height:20px; background:rgba(0,0,0,0.5); border:2px solid #fff; border-radius:4px; overflow:hidden relative">
-                    <div id="hud-p2-bar" style="height:100%; width:100%; background:#ffcc00; float:right; transition:width 0.1s"></div>
-                </div>
-                <div id="hud-p2-wins" style="margin-top:4px; font-size:16px; color:#aaa">● ○</div>
-            </div>
+            ${hudPlayer('p2')}
         `;
         document.body.appendChild(hud);
 
@@ -218,9 +243,11 @@ function game() {
             p1Name: document.getElementById('hud-p1-name'),
             p1Bar: document.getElementById('hud-p1-bar'),
             p1Wins: document.getElementById('hud-p1-wins'),
+
             p2Name: document.getElementById('hud-p2-name'),
             p2Bar: document.getElementById('hud-p2-bar'),
             p2Wins: document.getElementById('hud-p2-wins'),
+
             timer: document.getElementById('hud-timer')
         };
     }
@@ -236,9 +263,9 @@ function game() {
         if (!hud || !players.length) return;
 
         // Timer
+        // If timer gets to less than 10 seconds, turn red
         hud.els.timer.innerText = Math.ceil(roundTimer);
-        if (roundTimer <= 10) hud.els.timer.style.color = '#f00';
-        else hud.els.timer.style.color = '#fff';
+        if (roundTimer <= 10) hud.els.timer.classList.add("warning");
 
         // Health
         const p1Pct = Math.max(0, (players[0].health / MAX_HEALTH) * 100);
@@ -248,8 +275,14 @@ function game() {
         hud.els.p2Bar.style.width = `${p2Pct}%`;
 
         // Color change on low health
-        hud.els.p1Bar.style.background = p1Pct < 30 ? '#f44' : '#ffcc00';
-        hud.els.p2Bar.style.background = p2Pct < 30 ? '#f44' : '#ffcc00';
+        if (p1Pct < 30) hud.els.p1Bar.classList.add('low-health');
+        if (p2Pct < 30) hud.els.p2Bar.classList.add('low-health');
+    }
+
+    function clearHUDStyleClasses() {
+        hud.els.timer.classList.remove("warning");
+        hud.els.p1Bar.classList.remove('low-health');
+        hud.els.p2Bar.classList.remove('low-health');
     }
 
     function updateHUDWins() {
@@ -260,21 +293,71 @@ function game() {
     }
 
     // --- CANVAS SPLASH (OVERLAYS) ---
+    // canvasSplash is now ONLY for confetti. Text is HTML.
     let canvasSplash = null; // { type: 'KO'|'ROUND', text, sub, timer, scale, alpha }
 
     function triggerSplash(type, text, subText) {
-        canvasSplash = {
-            type: type,
-            text: text,
-            sub: subText,
-            timer: 1.5, // seconds to live
-            scale: 0.5,
-            alpha: 1.0,
-            confetti: []
-        };
+        // Check if element is available first
+        let overlay = document.getElementById('splash-overlay');
 
-        // Generate confetti for big events
+        // if not, inject it
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'splash-overlay';
+            overlay.innerHTML = `
+                <div class="splash-msg" id="splash-content">
+                    <img src="assets/images/ko.png" alt="splash-img" id="splash-img" class="hide" />
+                    <h1 id="main-text"></h1>
+                    <p id="sub-text"></p>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+        }
+
+        // Update HTML Content
+        const content = document.getElementById('splash-content');
+        const img = document.getElementById('splash-img');
+        const h1 = document.getElementById('main-text');
+        const p = document.getElementById('sub-text');
+
+        h1.innerText = text;
+        p.innerText = subText || "";
+
+        // Trigger Animation (Reflow hack to restart animation)
+        content.classList.remove('active');
+
+        // Remove classes  to reset img/h1 state
+        h1.classList.remove('hide');
+        img.classList.add('hide');
+
+        // Reload content
+        void content.offsetWidth; // Force browser to process the removal
+        content.classList.add('active');
+
+        if (type === 'KO') {
+            // Hide regular text
+            h1.classList.add('hide');
+
+            // Populate image assets
+            img.src = 'assets/images/ko.png';
+            img.classList.remove('hide')
+        }
+
+        // Auto-Hide after 2 seconds
+        // Clear any existing timeout to prevent flickering if calls happen fast
+        if (overlay.hideTimeout) clearTimeout(overlay.hideTimeout);
+        overlay.hideTimeout = setTimeout(() => {
+            content.classList.remove('active');
+            // type === 'KO' && h1.classList.remove('hide');
+        }, 2000);
+
+
+        // Handle Confetti (Keep existing Canvas logic for particles ONLY)
         if (type === 'KO' || type === 'WIN') {
+            canvasSplash = {
+                timer: 2.0,
+                confetti: []
+            };
             for (let i = 0; i < 50; i++) {
                 canvasSplash.confetti.push({
                     x: WIDTH / 2, y: HEIGHT / 2,
@@ -284,6 +367,8 @@ function game() {
                     life: 2.0
                 });
             }
+        } else {
+            canvasSplash = null; // No canvas work needed for simple text
         }
     }
 
@@ -661,7 +746,8 @@ function game() {
         players[1].y = FLOOR;
         players[1].facing = -1;
 
-        triggerSplash('ROUND', `Round ${round}`, 'FIGHT!');
+        clearHUDStyleClasses();
+        triggerSplash('ROUND', `${texts.hud.round} ${round}`, texts.hud.fight);
         updateHUD();
     }
 
@@ -675,10 +761,10 @@ function game() {
             // Slow motion effect
             timeScaleTarget = 0.1;
             slowMoTimer = 2.0; // Real seconds of slow mo
-            triggerSplash('KO', 'K.O.', winner.def.name + " Wins");
+            triggerSplash('KO', texts.hud.ko, `${winner.def.name} ${texts.hud.wins}`);
         } else {
             // Time over / Tie
-            triggerSplash('KO', 'TIME OVER', 'Draw Game');
+            triggerSplash('KO', texts.hud.timeOver, texts.hud.draw);
         }
 
         setTimeout(() => {
@@ -694,7 +780,7 @@ function game() {
     function endMatch(winner) {
         gameState = 'matchWin';
         destroyHUD();
-        triggerSplash('WIN', 'WINNER!', winner.def.name);
+        triggerSplash('WIN', texts.hud.win, winner.def.name);
         setTimeout(() => {
             showFighterSelect();
         }, 4000);
@@ -782,7 +868,6 @@ function game() {
 
     function render() {
         // Clear
-        ctx.fillStyle = "#000";
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
         // State check
@@ -858,8 +943,6 @@ function game() {
         // Canvas Splash (Overlays)
         if (canvasSplash) {
             ctx.save();
-            ctx.shadowColor = "#000";
-            ctx.shadowBlur = 10;
 
             // Confetti
             canvasSplash.confetti.forEach(c => {
@@ -868,19 +951,15 @@ function game() {
             });
 
             // Text
-            const size = 100 * canvasSplash.scale;
-            ctx.font = `900 ${size}px Arial`;
-            ctx.fillStyle = "#ffcc00";
-            ctx.textAlign = "center";
-            ctx.strokeStyle = "#fff";
-            ctx.lineWidth = 4;
+            // const size = 100 * canvasSplash.scale;
+            // ctx.font = `400 ${size}px "Jersey 25", monospace`;
+            // ctx.textAlign = "center";
 
-            ctx.fillText(canvasSplash.text, WIDTH / 2, HEIGHT / 2);
-            ctx.strokeText(canvasSplash.text, WIDTH / 2, HEIGHT / 2);
+            // ctx.fillText(canvasSplash.text, WIDTH / 2, HEIGHT / 2);
+            // ctx.strokeText(canvasSplash.text, WIDTH / 2, HEIGHT / 2);
 
-            ctx.font = `bold ${size * 0.4}px Arial`;
-            ctx.fillStyle = "#fff";
-            ctx.fillText(canvasSplash.sub, WIDTH / 2, HEIGHT / 2 + size * 0.6);
+            // ctx.font = `400 ${size * 0.4}px "Jersey 25", monospace`;
+            // ctx.fillText(canvasSplash.sub, WIDTH / 2, HEIGHT / 2 + size * 0.6);
 
             ctx.restore();
         }
@@ -915,6 +994,7 @@ function game() {
         <p class="splash-default insertCoin blink">${texts.titleScreen.insertCoin}</p>
         <p class="splash-default footer"><span class="jersey10">©</span> <a href="https://fogol.in/?referral=grupon-fighter" target="_blank">fogol.in</a> ${texts.titleScreen.footer}.</p>
         `;
+
         // Show the content after loaded
         overlay.style.display = 'flex';
 
@@ -938,53 +1018,56 @@ function game() {
         const makeCharOpts = (playerSide) => charKeys.map((k, i) => {
             const isSelected = selected[playerSide] === k;
             // Add a marker (P1/P2) to show who is hovering
-            const marker = isSelected ? `<div style="position:absolute; top:-10px; left:0; width:100%; background:${playerSide === 'p1' ? '#6ad' : '#da8'}; color:#000; font-size:10px; font-weight:bold">${playerSide.toUpperCase()}</div>` : '';
+            const marker = isSelected
+                ? `<div class="identifier ${playerSide}">${playerSide.toUpperCase()}</div>`
+                : '';
 
-            return `
-            <div class="char-card ${isSelected ? 'selected' : ''}" 
-                 style="position:relative"
-                 onclick="window.selectChar('${playerSide}', '${k}')">
+            return `<div
+                    class="char-card ${isSelected && 'selected'}" 
+                    onclick="window.selectChar('${playerSide}', '${k}')"
+            >
                 ${marker}
-                <div style="width:100%; height:60px; background:${isSelected ? '#444' : '#222'}; display:flex; align-items:center; justify-content:center; font-size:30px">
-                     ${k.substring(0, 1).toUpperCase()}
+                <div class="item ${isSelected && 'item-selected'}">
+                    ${k.substring(0, 1).toUpperCase()}
                 </div>
-                <div style="padding:5px; font-weight:bold; font-size:12px">${characters[k].name}</div>
+                <div class="item-name">
+                    ${characters[k].name}
+                </div>
             </div>`;
         }).join('');
 
-        panel.innerHTML = `
-            <h2 style="color:#fff; text-transform:uppercase; letter-spacing:2px">Select Fighters</h2>
-            
-            <div style="display:flex; justify-content:center; gap:40px; margin-bottom:10px; text-align:left">
-                <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:8px; border:1px solid #444">
-                    <h3 style="color:#6ad; margin-top:0; border-bottom:1px solid #6ad; padding-bottom:5px">PLAYER 1 <span style="font-size:10px; color:#fff; float:right; margin-top:5px">A / D</span></h3>
-                    <div class="grid-2">${makeCharOpts('p1')}</div>
-                </div>
+        const makeCharBox = (playerSide) => {
+            return `<div class="char-box">
+                <h2>
+                    ${texts.characterSelection.player} ${playerSide === 'p1' ? 1 : 2}
+                    <span>${texts.characterSelection.instructions[playerSide]}</span>
+                </h2>
+                <div class="grid-2">${makeCharOpts(playerSide)}</div>
+            </div>`;
+        }
 
-                <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:8px; border:1px solid #444">
-                    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #da8; padding-bottom:5px; margin-bottom:15px">
-                        <h3 style="color:#da8; margin:0">PLAYER 2</h3>
-                        <span style="font-size:10px; color:#fff">Arrows</span>
-                    </div>
-                    <div class="grid-2">${makeCharOpts('p2')}</div>
-                    
-                    <div style="margin-top:15px; text-align:center">
-                        <div style="font-size:12px; margin-bottom:5px; color:#aaa">OPPONENT MODE (Space)</div>
-                        <button onclick="window.toggleAI()" style="width:100%; padding:8px; background:${p2IsAI ? '#d00' : '#444'}; color:#fff; border:none; font-weight:bold; cursor:pointer">
-                            ${p2IsAI ? 'CPU' : 'HUMAN'}
+        panel.innerHTML = `
+            <h1 class="title">${texts.characterSelection.title}</h1>
+            <p class="splash-default">${texts.characterSelection.subtitle}</p>
+            
+            <div class="container">
+                ${makeCharBox('p1')}
+                <div class="vs">
+                    <img src="assets/images/vs.png"/>
+                    <div class="oponent-type">
+                        <div class="content">${texts.characterSelection.oponent.mode}</div>
+                        <button
+                            class="${p2IsAI && 'ai'}"
+                            onclick="window.toggleAI()"
+                        >
+                            ${texts.characterSelection.oponent[p2IsAI ? 'ai' : 'human']}
                         </button>
                     </div>
                 </div>
+                ${makeCharBox('p2')}
             </div>
 
-            <p class="blink" style="margin-top:20px; color:#aaa">PRESS <strong style="color:#fff">ENTER</strong> TO CONFIRM</p>
-
-            <style>
-                .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-                .char-card { border: 2px solid #333; cursor: pointer; transition: 0.1s; text-align: center; width: 80px; }
-                .char-card.selected { border-color: #fff; transform: scale(1.05); z-index:10; box-shadow:0 0 10px rgba(0,0,0,0.5); }
-                .blink { animation: blink 1s infinite; }
-            </style>
+            <p class="splash-default blink">${texts.characterSelection.instructions.continue}</p>
         `;
 
         // Logic to cycle index safely
@@ -1048,32 +1131,23 @@ function game() {
         const makeStageOpts = () => stageKeys.map((k, i) => {
             const isSelected = selected.stage === k;
             // Visual scale effect for selected stage
-            const scale = isSelected ? 'transform: scale(1.1); border-color: #ffcc00; z-index:10; box-shadow:0 0 20px #ffcc00' : 'transform: scale(0.9); opacity: 0.6; border-color: #444';
-
             return `
-            <div class="stage-card" onclick="window.selectStage('${k}')" style="${scale}">
-                <div style="height:100px; background:${stages[k].layers[0].color}; display:flex; align-items:center; justify-content:center; color:#fff; text-shadow:1px 1px 0 #000; font-weight:bold; font-size:18px">
+            <div class="stage-card ${isSelected && 'selected'}" onclick="window.selectStage('${k}')">
+                <div class="thumb" style="--bg-color: ${stages[k].layers[0].color}">
                     ${stages[k].name}
                 </div>
             </div>`;
         }).join('');
 
         panel.innerHTML = `
-            <h2 style="color:#fff; text-transform:uppercase; letter-spacing:2px">Select Stage</h2>
-            
-            <div style="display:flex; justify-content:center; align-items:center; gap:10px; height: 160px; perspective: 1000px;">
+            <h1 class="title">${texts.stageSelection.title}</h1>
+            <div class="splash-default">
+                <p>${texts.stageSelection.subtitle}</p>
+            </div>
+            <div class="stage-box">
                 ${makeStageOpts()}
             </div>
-
-            <div style="margin-top:20px">
-                <p style="color:#aaa; font-size:14px"> < A / D > or < Arrows > to switch</p>
-                <p class="blink" style="margin-top:20px; font-size:20px">PRESS <strong style="color:#fff">ENTER</strong> TO FIGHT</p>
-            </div>
-
-            <style>
-                .stage-card { width: 200px; border: 4px solid #444; cursor: pointer; transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); background:#000; }
-                .blink { animation: blink 1s infinite; }
-            </style>
+            <p class="splash-default blink">${texts.stageSelection.pressEnter}</p>
         `;
 
         window.selectStage = (key) => { selected.stage = key; showStageSelect(); };
