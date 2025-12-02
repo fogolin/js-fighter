@@ -1,6 +1,7 @@
 // Retro Punch - Enhanced
 // Entry point: initializes modules, UI, and starts loop
 import language from './language.js';
+import stages from './stages.js';
 
 function game() {
     // --- CONFIGURATION ---
@@ -79,48 +80,7 @@ function game() {
         await Promise.all(promises);
     }
 
-    // Parallax stage definitions
-    // The further the layer, the closer it is to the players
-    const stages = {
-        cafe: {
-            name: "Café",
-            layers: [
-                {
-                    src: ["./assets/bg.jpg", "./assets/bg2.jpg"],
-                    animSpeed: 0.5, // Seconds per frame
-                    color: "#0a0f1a", y: 0, scroll: 0.1
-                },
-                { color: "#1a2033", y: 120, scroll: 0.2 },
-                { color: "#24324a", y: 220, scroll: 0.4 },
-                {
-                    color: "#304a5a",
-                    y: 320,
-                    scroll: 0.7
-                },
-            ],
-            floorColor: "#2a2318"
-        },
-        park: {
-            name: "City Park",
-            layers: [
-                { img: "", color: "#081419", y: 0, scroll: 0.1 },
-                { img: "", color: "#0f2a2f", y: 140, scroll: 0.25 },
-                { img: "", color: "#135a3a", y: 220, scroll: 0.5 },
-                { img: "", color: "#1f7a4a", y: 310, scroll: 0.8 },
-            ],
-            floorColor: "#3d2a1a"
-        },
-        campus: {
-            name: "Campus",
-            layers: [
-                { img: "", color: "#0b1021", y: 0, scroll: 0.1 },
-                { img: "", color: "#141a36", y: 110, scroll: 0.25 },
-                { img: "", color: "#2b345e", y: 210, scroll: 0.5 },
-                { img: "", color: "#454e8a", y: 300, scroll: 0.85 },
-            ],
-            floorColor: "#222222"
-        }
-    };
+
 
     // Character definitions with basic action sprites (placeholder shapes)
     // Each animation has a style to draw different looks for actions
@@ -912,17 +872,6 @@ function game() {
                 ctx.fillRect(c.x, c.y, 8, 8);
             });
 
-            // Text
-            // const size = 100 * canvasSplash.scale;
-            // ctx.font = `400 ${size}px "Jersey 25", monospace`;
-            // ctx.textAlign = "center";
-
-            // ctx.fillText(canvasSplash.text, WIDTH / 2, HEIGHT / 2);
-            // ctx.strokeText(canvasSplash.text, WIDTH / 2, HEIGHT / 2);
-
-            // ctx.font = `400 ${size * 0.4}px "Jersey 25", monospace`;
-            // ctx.fillText(canvasSplash.sub, WIDTH / 2, HEIGHT / 2 + size * 0.6);
-
             ctx.restore();
         }
     }
@@ -976,20 +925,26 @@ function game() {
         // Helper: Find current index
         const getIdx = (side) => charKeys.indexOf(selected[side]);
 
-        // Helper: Generate Character UI
-        const makeCharOpts = (playerSide) => charKeys.map((k, i) => {
-            const isSelected = selected[playerSide] === k;
-            // Add a marker (P1/P2) to show who is hovering
-            const marker = isSelected
-                ? `<div class="identifier ${playerSide}">${playerSide.toUpperCase()}</div>`
-                : '';
+        // Make a shared grid for both players to select the character
+        const makeCharOpts = () => charKeys.map((k) => {
+            const isP1 = selected.p1 === k;
+            const isP2 = selected.p2 === k;
 
-            return `<div
-                    class="char-card ${isSelected && 'selected'}" 
-                    onclick="window.selectChar('${playerSide}', '${k}')"
+            // Apply classes based on who has selected this card
+            let classes = "shared-card";
+            if (isP1) classes += " p1-active";
+            if (isP2) classes += " p2-active";
+
+            // Render the character icon/name
+            return `
+            <div
+                class="${classes}"
+                onclick="window.selectChar('p1', '${k}')"
             >
-                ${marker}
-                <div class="item ${isSelected && 'item-selected'}">
+                <div class="badge p1">P1</div>
+                <div class="badge p2">P2</div>
+                
+                <div class="item">
                     ${k.substring(0, 1).toUpperCase()}
                 </div>
                 <div class="item-name">
@@ -998,24 +953,25 @@ function game() {
             </div>`;
         }).join('');
 
+        // Character selection
         const makeCharBox = (playerSide) => {
             return `<div class="char-box">
-                <h2>
+                <span class="splash-default">
                     ${texts.characterSelection.player} ${playerSide === 'p1' ? 1 : 2}
-                    <span>${texts.characterSelection.instructions[playerSide]}</span>
-                </h2>
-                <div class="grid-2">${makeCharOpts(playerSide)}</div>
+                    </span>
+                    <h2>${selected[playerSide]}</h2>
+                    <span class="splash-default">${texts.characterSelection.instructions.general} ${texts.characterSelection.instructions[playerSide]}</span>
             </div>`;
         }
 
+        // Render character selection panel
         panel.innerHTML = `
             <h1 class="title">${texts.characterSelection.title}</h1>
-            <p class="splash-default">${texts.characterSelection.subtitle}</p>
             
-            <div class="container">
+            <div class="match-settings">
                 ${makeCharBox('p1')}
-                <div class="vs">
-                    <img src="assets/images/vs.png"/>
+                 <div class="vs">
+                    <img src="./assets/images/vs.png"/>
                     <div class="oponent-type">
                         <div class="content">${texts.characterSelection.oponent.mode}</div>
                         <button
@@ -1029,10 +985,16 @@ function game() {
                 ${makeCharBox('p2')}
             </div>
 
-            <p class="splash-default blink">${texts.characterSelection.instructions.continue}</p>
+            <div class="shared-grid">
+                ${makeCharOpts()}
+            </div>
+
+            <p class="splash-default blink">
+                ${texts.characterSelection.instructions.continue}
+            </p>
         `;
 
-        // Logic to cycle index safely
+        // --- INPUT LOGIC (Keep cycle logic) ---
         const cycle = (current, dir) => {
             let next = current + dir;
             if (next < 0) next = charKeys.length - 1;
@@ -1073,7 +1035,7 @@ function game() {
                 update = true;
             }
 
-            // Navigation
+            // Confirm
             if (e.key === 'Enter') {
                 showStageSelect();
                 return;

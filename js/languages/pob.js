@@ -10,6 +10,7 @@ export const language = {
         subtitle: "< A / D > ou < Setas > para mudar",
         player: "Jogador",
         instructions: {
+            general: "Escolha com",
             p1: "A / D",
             p2: "Setas",
             continue: "Pressione ENTER para confirmar"
