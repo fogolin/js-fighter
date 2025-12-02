@@ -1,0 +1,81 @@
+/* HUD */
+#game-hud {
+	position: fixed;
+	left: 50%;
+	top: 10px;
+	transform: translateX(-50%);
+	width: min(1200px, 94%);
+	z-index: 100;
+	pointer-events: none;
+	font-family: "Jersey 10", monospace, sans-serif;
+	color: white;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	text-shadow: 2px 2px 0 #000;
+}
+
+#game-hud .timer {
+	text-align: center;
+	padding: 0 20px;
+}
+
+.timer .warning {
+	color: #f00 !important;
+}
+
+#hud-timer {
+	font-size: 3em;
+	color: #fff;
+	font-family: "Jersey 15", monospace;
+	background: #000;
+	padding: 2px 10px;
+	border: 2px solid #444;
+	text-align: center;
+	min-width: 50px;
+}
+
+#game-hud .container {
+	width: 40%;
+	gap: unset;
+	display: flex;
+	flex-direction: column;
+}
+
+#game-hud .right {
+	text-align: right;
+}
+
+#game-hud .right .health-bar {
+	justify-content: flex-end;
+}
+
+#game-hud .container .name {
+	font-size: 20px;
+	margin-bottom: 4px;
+}
+
+#game-hud .container .health-bar {
+	height: 20px;
+	background: rgba(0, 0, 0, 0.5);
+	border: 2px solid #fff;
+	overflow: hidden relative;
+	display: flex;
+}
+
+#game-hud .container .fights-won {
+	margin-top: 4px;
+	font-size: 16px;
+	color: #aaa;
+}
+
+#game-hud .container .health-bar div {
+	height: 100%;
+	width: 100%;
+	background: #ffcc00;
+	transition: width 0.1s;
+}
+
+#game-hud .container .health-bar .low-health {
+	background: #f44 !important;
+}

@@ -1,0 +1,26 @@
+:root {
+	--bg: rgb(6, 11, 22);
+	--ui: rgb(19, 21, 42);
+	--accent: #f25;
+
+	--title-gradient-start: #5c92ed;
+	--title-gradient-end: #eeffee;
+	--title-border: rgb(9, 10, 46);
+	--title-shadow: rgb(34, 38, 255);
+
+	--text: #efe;
+	--text-gradient-start: #ebb706;
+	--text-gradient-end: #f65d00;
+	--text-border: rgb(9, 10, 46);
+	--text-shadow: rgb(12, 14, 148);
+
+	--splash-gradient-start: #ebb706;
+	--splash-gradient-end: #f65d00;
+	--splash-border: rgb(9, 10, 46);
+	--splash-shadow: rgb(12, 14, 148);
+
+	--bar-bg: #333a;
+	--bar-p1: #4ad04a;
+	--bar-p2: #4ad04a;
+	/* --bar-p2: #f46; */
+}
