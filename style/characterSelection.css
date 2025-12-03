@@ -9,8 +9,8 @@
 
 .shared-card {
 	position: relative;
-	width: calc(6 * var(--10px) * var(--scale));
-	height: calc(8 * var(--10px) * var(--scale));
+	width: calc(8 * var(--10px) * var(--scale));
+	height: calc(10 * var(--10px) * var(--scale));
 	border: calc(var(--4px) * var(--scale)) solid var(--gray-2);
 	background: var(--gray-1);
 	display: flex;
@@ -34,7 +34,7 @@
 	position: absolute;
 	top: calc(-1 * var(--12px) * var(--scale));
 	padding: calc(var(--4px) * var(--scale)) calc(var(--8px) * var(--scale));
-	font-size: calc(var(--16px) * var(--scale));
+	font-size: calc(2 * var(--10px) * var(--scale));
 	font-weight: bold;
 	/* border-radius: calc(var(--4px) * var(--scale)); */
 	z-index: 10;
@@ -61,7 +61,7 @@
 /* Active States */
 .shared-card.p1-active {
 	border-color: var(--color-p1);
-	box-shadow: 0 0 calc(var(--10px) * var(--scale)) var(--color-p1-active);
+	box-shadow: 0 0 calc(var(--16px) * var(--scale)) var(--color-p1-active);
 }
 .shared-card.p1-active .badge.p1 {
 	display: block;
@@ -69,7 +69,7 @@
 
 .shared-card.p2-active {
 	border-color: var(--color-p2);
-	box-shadow: 0 0 calc(var(--10px) * var(--scale)) var(--color-p1-active);
+	box-shadow: 0 0 calc(var(--16px) * var(--scale)) var(--color-p2-active);
 }
 .shared-card.p2-active .badge.p2 {
 	display: block;
@@ -94,7 +94,7 @@
 }
 
 .match-settings h2 {
-	margin: calc(var(--16px) * var(--scale)) 0;
+	margin: calc(var(--8px) * var(--scale)) 0;
 }
 
 .vs {
@@ -117,7 +117,7 @@
 }
 
 .oponent-type .content {
-	font-size: calc(var(--12px) * var(--scale));
+	font-size: calc(var(--10px) * var(--scale));
 	margin-bottom: calc(var(--4px) * var(--scale));
 	color: var(--gray-0);
 }
@@ -126,7 +126,7 @@
 	padding: calc(var(--8px) * var(--scale));
 	color: var(--text);
 	border: none;
-	font-size: calc(var(--16px) * var(--scale));
+	font-size: calc(2 * var(--10px) * var(--scale));
 	font-family: "Tiny 5", monospace;
 	text-transform: uppercase;
 	cursor: pointer;
@@ -146,6 +146,6 @@
 }
 
 .shared-card .item-name {
-	font-size: calc(var(--16px) * var(--scale));
+	font-size: calc(2 * var(--10px) * var(--scale));
 	margin-bottom: calc(var(--4px) * var(--scale));
 }

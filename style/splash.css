@@ -23,7 +23,7 @@
 }
 
 #splash-img {
-	width: 300px;
+	width: calc(30 * var(--10px) * var(--scale));
 	height: auto;
 	margin-bottom: calc(2 * var(--10px) * var(--scale));
 	display: block;
@@ -58,7 +58,7 @@
 .splash-msg p {
 	font-family: "Tiny 5", monospace;
 	font-size: calc(3 * var(--16px) * var(--scale));
-	color: #fff;
+	color: var(--white);
 	margin: calc(var(--10px) * var(--scale)) 0 0 0;
 	filter: drop-shadow(
 		calc(var(--2px) * var(--scale)) calc(var(--4px) * var(--scale))

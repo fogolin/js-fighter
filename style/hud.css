@@ -1,38 +1,42 @@
 /* HUD */
 #game-hud {
-	position: absolute !important;
-	width: 100% !important;
-	height: 100% !important;
-	top: 0.5em;
+	/* Anchor element */
+	position: absolute;
+	/* width: 100%; */
+	padding: calc(var(--12px) * var(--scale)) calc(var(--16px) * var(--scale));
+	top: 0;
 	left: 0;
+	right: 0;
+
 	z-index: 100;
 	pointer-events: none;
 	font-family: "Jersey 10", monospace, sans-serif;
-	color: white;
+	color: var(--white);
 	display: flex;
 	justify-content: space-around;
-	align-items: flex-start;
-	text-shadow: 2px 2px 0 #000;
+	text-shadow: calc(var(--2px) * var(--scale)) calc(var(--2px) * var(--scale)) 0
+		var(--black-0);
+	align-items: center;
 }
 
 #game-hud .timer {
 	text-align: center;
-	padding: 0 20px;
+	padding: 0 calc(2 * var(--10px) * var(--scale));
 }
 
 .timer .warning {
-	color: #f00 !important;
+	color: var(--accent) !important;
 }
 
 #hud-timer {
-	font-size: 3em;
-	color: #fff;
+	font-size: calc(3 * var(--16px) * var(--scale));
+	color: var(--white);
 	font-family: "Jersey 15", monospace;
-	background: #000;
-	padding: 2px 10px;
-	border: 2px solid #444;
+	background: var(--black-0);
+	padding: calc(var(--2px) * var(--scale)) calc(var(--10px) * var(--scale));
+	border: calc(var(--4px) * var(--scale)) solid var(--white);
 	text-align: center;
-	min-width: 50px;
+	min-width: calc(5 * var(--10px) * var(--scale));
 }
 
 #game-hud .container {
@@ -51,31 +55,31 @@
 }
 
 #game-hud .container .name {
-	font-size: 20px;
-	margin-bottom: 4px;
+	font-size: calc(2 * var(--16px) * var(--scale));
+	margin-bottom: calc(var(--4px) * var(--scale));
 }
 
 #game-hud .container .health-bar {
-	height: 20px;
-	background: rgba(0, 0, 0, 0.5);
-	border: 2px solid #fff;
+	height: calc(2 * var(--10px) * var(--scale));
+	background: var(--black-50);
+	border: calc(var(--4px) * var(--scale)) solid var(--white);
 	overflow: hidden relative;
 	display: flex;
 }
 
 #game-hud .container .fights-won {
-	margin-top: 4px;
-	font-size: 16px;
-	color: #aaa;
+	margin-top: calc(var(--4px) * var(--scale));
+	font-size: calc(var(--16px) * var(--scale));
+	color: var(--gray-0);
 }
 
 #game-hud .container .health-bar div {
 	height: 100%;
 	width: 100%;
-	background: #ffcc00;
+	background: var(--bar-color-regular);
 	transition: width 0.1s;
 }
 
 #game-hud .container .health-bar .low-health {
-	background: #f44 !important;
+	background: var(--bar-color-low) !important;
 }

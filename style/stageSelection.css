@@ -3,35 +3,36 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	gap: 10px;
-	height: 160px;
-	perspective: 1000px;
+	gap: calc(var(--10px) * var(--scale));
+	height: calc(10 * var(--16px) * var(--scale));
+	perspective: calc(100 * var(--10px) * var(--scale));
 }
 
 .stage-box .selected {
-	border-color: #ffcc00;
+	border-color: var(--color-p1);
+	box-shadow: 0 0 calc(var(--16px) * var(--scale)) var(--color-p1-active);
 	z-index: 10;
-	box-shadow: 0 4px #ffcc00;
-	transform: scale(1.1);
+	/* transform: scale(1.2); */
 }
 
 .stage-card {
-	width: 200px;
-	border: 4px solid #444;
+	width: calc(20 * var(--10px) * var(--scale));
+	border: calc(var(--4px) * var(--scale)) solid var(--gray-2);
 	cursor: pointer;
 	transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-	background: #000;
-	transform: scale(0.9);
+	background: var(--black-0);
+	/* transform: scale(1); */
 }
 
 .stage-card .thumb {
-	height: 100px;
+	height: calc(10 * var(--10px) * var(--scale));
 	background: var(--bg-color);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: #fff;
-	text-shadow: 1px 1px 0 #000;
+	color: var(--white);
+	text-shadow: calc(var(--1px) * var(--scale)) calc(var(--2px) * var(--scale))
+		var(--text-shadow);
 	font-weight: bold;
-	font-size: 18px;
+	font-size: calc(2 * var(--10px) * var(--scale));
 }

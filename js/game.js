@@ -1124,7 +1124,7 @@ function game() {
             <div class="splash-default">
                 <p>${texts.stageSelection.subtitle}</p>
             </div>
-            
+
             <p class="splash-default blink">${texts.stageSelection.pressEnter}</p>
         `;
 
