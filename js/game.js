@@ -1161,6 +1161,79 @@ function game() {
         });
     }
 
+    // --- MOBILE CONTROLS SETUP ---
+    function setupMobileControls() {
+        const controls = document.createElement('div');
+        controls.id = 'mobile-controls';
+
+        // HTML Structure for GameBoy Layout
+        controls.innerHTML = `
+            <div class="dpad">
+                <div class="control-btn dpad-btn dpad-up" data-key="ArrowUp">▲</div>
+                <div class="control-btn dpad-btn dpad-left" data-key="ArrowLeft">◀</div>
+                <div class="control-btn dpad-btn dpad-right" data-key="ArrowRight">▶</div>
+                <div class="control-btn dpad-btn dpad-down" data-key="ArrowDown">▼</div>
+            </div>
+            
+            <div class="middle-btns">
+                <div class="control-btn pill-btn" data-key=" ">SELECT</div>
+                <div class="control-btn pill-btn" data-key="Enter">START</div>
+            </div>
+
+            <div class="action-btns">
+                <div class="control-btn big-btn btn-y" data-key=";">y</div>
+                <div class="control-btn big-btn btn-x" data-key=";">X</div>
+                <div class="control-btn big-btn btn-b" data-key="l">B</div>
+                <div class="control-btn big-btn btn-a" data-key="k">A</div>
+            </div>
+        `;
+
+        document.body.appendChild(controls);
+
+        // --- TOUCH LOGIC ---
+        // We bind touchstart/end to update the global 'keys' object directly
+        const buttons = controls.querySelectorAll('.control-btn');
+
+        buttons.forEach(btn => {
+            const key = btn.dataset.key;
+
+            const triggerEvent = (type) => {
+                // Dispatch a real keyboard event
+                const event = new KeyboardEvent(type, {
+                    key: key,
+                    bubbles: true,
+                    cancelable: true
+                });
+                window.dispatchEvent(event);
+            };
+
+            const press = (e) => {
+                e.preventDefault();
+                btn.classList.add('pressed');
+                triggerEvent('keydown'); // Simulate Key Down
+                if (navigator.vibrate) navigator.vibrate(10);
+            };
+
+            const release = (e) => {
+                e.preventDefault();
+                btn.classList.remove('pressed');
+                triggerEvent('keyup'); // Simulate Key Up
+            };
+
+            // Touch Listeners
+            btn.addEventListener('touchstart', press, { passive: false });
+            btn.addEventListener('touchend', release, { passive: false });
+
+            // Mouse Listeners (for testing)
+            btn.addEventListener('mousedown', press);
+            btn.addEventListener('mouseup', release);
+            btn.addEventListener('mouseleave', release);
+        });
+    }
+
+    // Initialize controls
+    setupMobileControls();
+
     // --- UTILS ---
     function roundedRect(ctx, x, y, w, h, r) {
         ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r);

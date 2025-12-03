@@ -1,0 +1,130 @@
+/* --- MOBILE CONTROLS --- */
+#mobile-controls {
+	display: none; /* Hidden by default on desktop */
+	width: 100%;
+	z-index: 200;
+	pointer-events: none; /* Let clicks pass through gaps */
+	padding: 0 calc(1.5 * var(--16px));
+	margin-top: calc(2.5 * var(--16px));
+	box-sizing: border-box;
+	justify-content: space-between;
+	align-items: flex-end;
+}
+
+/* Show on mobile or small screens */
+@media (max-width: 800px), (hover: none) {
+	#mobile-controls {
+		display: flex;
+	}
+}
+
+/* Shared Button Styles */
+.control-btn {
+	pointer-events: auto; /* Enable touch on buttons */
+	background: var(--black-20);
+	border: var(--2px) solid var(--black-40);
+	box-shadow: 0 var(--4px) 0 var(--black-50);
+	backdrop-filter: blur(var(--2px));
+	border-radius: 50%;
+	color: var(--white);
+	font-family: "Tiny 5", monospace;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	user-select: none;
+	touch-action: manipulation; /* Prevents double-tap zoom */
+	transition: transform 0.1s, background 0.1s;
+}
+
+.control-btn:active,
+.control-btn.pressed {
+	transform: translateY(var(--4px)); /* Press down effect */
+	box-shadow: 0 0 0 var(--black-50);
+	background: var(--black-40);
+}
+
+/* D-PAD Area */
+.dpad {
+	position: relative;
+	width: calc(14 * var(--10px));
+	height: calc(14 * var(--10px));
+}
+
+.dpad-btn {
+	position: absolute;
+	width: calc(4 * var(--10px));
+	height: calc(4 * var(--10px));
+	border-radius: var(--4px);
+	background: var(--black-80);
+	border-color: var(--gray-2);
+}
+
+.dpad-up {
+	top: 0;
+	left: calc(4.8 * var(--10px));
+}
+.dpad-down {
+	bottom: 0;
+	left: calc(4.8 * var(--10px));
+}
+.dpad-left {
+	top: calc(4.8 * var(--10px));
+	left: 0;
+}
+.dpad-right {
+	top: calc(4.8 * var(--10px));
+	right: 0;
+}
+
+/* Middle Area (Start/Select) */
+.middle-btns {
+	display: flex;
+	gap: var(--16px);
+	margin-bottom: calc(2 * var(--10px));
+	flex-direction: column;
+}
+
+.pill-btn {
+	width: calc(6 * var(--10px));
+	height: calc(2.5 * var(--10px));
+	border-radius: var(--16px);
+	font-size: var(--12px);
+	letter-spacing: var(--1px);
+	background: var(--gray-1);
+	transform: rotate(-15deg); /* Classic slanted look */
+}
+
+/* Action Buttons (A, B, X) */
+.action-btns {
+	position: relative;
+	width: calc(13 * var(--10px));
+	height: calc(13 * var(--10px));
+}
+
+.big-btn {
+	position: absolute;
+	width: calc(5 * var(--10px));
+	height: calc(5 * var(--10px));
+	font-size: calc(2 * var(--12px));
+}
+
+.btn-b {
+	bottom: 0;
+	left: var(--10px);
+	background: var(--ab-buttons-color);
+} /* Kick */
+.btn-a {
+	bottom: var(--10px);
+	right: 0;
+	background: var(--ab-buttons-color);
+} /* Punch */
+.btn-x {
+	top: 0;
+	right: var(--10px);
+	background: var(--xy-buttons-color);
+} /* Special */
+.btn-y {
+	top: var(--10px);
+	left: 0;
+	background: var(--xy-buttons-color);
+} /* Special */

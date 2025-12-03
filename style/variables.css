@@ -55,6 +55,7 @@
 	--black-0: rgb(0, 0, 0);
 	--black-00: rgba(0, 0, 0, 0);
 	--black-20: rgba(0, 0, 0, 0.2);
+	--black-40: rgba(0, 0, 0, 0.4);
 	--black-50: rgba(0, 0, 0, 0.5);
 	--black-60: rgba(0, 0, 0, 0.6);
 	--black-80: rgba(0, 0, 0, 0.8);
@@ -68,4 +69,8 @@
 
 	--shared-card-active: var(--white);
 	--badge-text-color: var(--white);
+
+	/* D Pad */
+	--ab-buttons-color: rgba(200, 50, 50, 0.6);
+	--xy-buttons-color: rgba(50, 100, 200, 0.6);
 }

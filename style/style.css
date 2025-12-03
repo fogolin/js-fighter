@@ -6,6 +6,7 @@
 @import "splash.css";
 @import "stageSelection.css";
 @import "crt.css";
+@import "mobile.css";
 
 html,
 body {
@@ -17,8 +18,9 @@ body {
 }
 
 body {
-	justify-content: center;
 	display: flex;
+	flex-direction: column;
+	/* justify-content: center; */
 	height: 100vh;
 	background-color: var(--body);
 }
