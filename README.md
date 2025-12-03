@@ -1,12 +1,16 @@
-![Groupon Fighter logo](assets/images/logo.png "Groupon Fighter")
+# Grupon Fighter
 
-# 👊 A "No-Engine" Retro Fighting Game made with Vanilla JS, HTML & CSS.
+<p align="center">
+    <img src="assets/images/logo.png" alt="Groupon Fighter logo" width="250"/>
+</p>
+
+## 👊 A "No-Engine" Retro Fighting Game made with Vanilla JS, HTML & CSS
 
 Grupon Fighter is a lightweight, browser-based fighting game built for the Grupon crew. Set in the capital of Brazil, Brasília, it features stages based on our favorite local hangouts and characters based on our friends.
 
 It is built to be played anywhere — from a high-end PC to a mobile phone — without any installation or heavy downloads.
 
-# ✨ Features
+## ✨ Features
 
 - **Zero Dependencies**: No Unity, No Phaser, No React. Just pure web technologies.
 - **Retro Aesthetics**: 90s arcade feel with CSS-based CRT scanlines and tube distortion effects.
@@ -16,7 +20,7 @@ It is built to be played anywhere — from a high-end PC to a mobile phone — w
 - **Performance**: Highly optimized game loop ensuring 60FPS on almost any device.
 - **Local AI**: Fight against the computer (CPU) or challenge a friend on the same screen.
 
-# 🕹️ Controls
+## 🕹️ Controls
 
 The game supports `Keyboard` and `Touch` controls.
 
@@ -32,15 +36,15 @@ The game supports `Keyboard` and `Touch` controls.
 
 > On Mobile, a virtual controller appears automatically on small screens. `Start`: Confirm and `Select`: Toggle AI
 
-# 🚀 How to Run
+## 🚀 How to Run
 
 Because this project uses modern JavaScript Modules (import/export), you need a local server to run it (browsers block modules from running directly from `file://`).
 
-## Option A: VS Code (Easiest)
+### Option A: VS Code (Easiest)
 
 Install the _Live Server_ extension in **VS Code**. Open `index.html`. Right-click and select "Open with Live Server". It should open the browser, but if not, you can access it through [http://127.0.0.1:3000/](localhost server)
 
-## Option B: Python (Built-in on Mac/Linux)
+### Option B: Python (Built-in on Mac/Linux)
 
 Open your terminal in the project folder and run:
 
@@ -50,7 +54,7 @@ python3 -m http.server
 
 Then open [http://localhost:8000/](localhost server)
 
-## Option C: Node.js
+### Option C: Node.js
 
 Open the project folder and run a simple node server:
 
@@ -58,11 +62,11 @@ Open the project folder and run a simple node server:
 npx serve .
 ```
 
-# 🎨 How to Customize (Modding Guide)
+## 🎨 How to Customize (Modding Guide)
 
 This game is designed to be easily modded. You can add new friends or stages by editing the JSON-like structures in the code.
 
-## 1. Adding a New Character
+### 1. Adding a New Character
 
 Open `js/game.js` and look for the const `characters` object. Add a new entry:
 
@@ -82,7 +86,7 @@ newFriend: {
 }
 ```
 
-## 2. Adding a New Stage
+### 2. Adding a New Stage
 
 Open `js/stages.js` (or the stages section in `game.js`). Add your hangout spot. It's important to note that the layers here accept `arrays` on `src`, for background animation purposes.
 
@@ -99,7 +103,7 @@ pontao: {
 }
 ```
 
-# 🛠️ Project Structure
+## 🛠️ Project Structure
 
 This is an ongoing project, so the structure may very well change in the near future, but it currently looks like this:
 
