@@ -56,7 +56,7 @@
 }
 
 .splash-msg p {
-	font-family: "Tiny 5", monospace;
+	font-family: "Jersey 10", monospace;
 	font-size: calc(3 * var(--16px) * var(--scale));
 	color: var(--white);
 	margin: calc(var(--10px) * var(--scale)) 0 0 0;

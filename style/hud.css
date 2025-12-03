@@ -10,7 +10,7 @@
 
 	z-index: 100;
 	pointer-events: none;
-	font-family: "Jersey 10", monospace, sans-serif;
+	font-family: "Tiny 5", monospace, sans-serif;
 	color: var(--white);
 	display: flex;
 	justify-content: space-around;
@@ -31,7 +31,7 @@
 #hud-timer {
 	font-size: calc(3 * var(--16px) * var(--scale));
 	color: var(--white);
-	font-family: "Jersey 15", monospace;
+	font-family: "Jersey 10", monospace;
 	background: var(--black-0);
 	padding: calc(var(--2px) * var(--scale)) calc(var(--10px) * var(--scale));
 	border: calc(var(--4px) * var(--scale)) solid var(--white);
@@ -55,7 +55,7 @@
 }
 
 #game-hud .container .name {
-	font-size: calc(2 * var(--16px) * var(--scale));
+	font-size: calc(2 * var(--12px) * var(--scale));
 	margin-bottom: calc(var(--4px) * var(--scale));
 }
 
