@@ -15,10 +15,15 @@ function game() {
     const texts = language[lang];
 
     // --- GLOBAL STATE ---
-    const FLOOR_RATIO = 0.78;
+    const FLOOR_RATIO = 0.82;
     const GRAVITY = 0.6;
-    let WIDTH = window.innerWidth;
-    let HEIGHT = window.innerHeight;
+
+    // Canvas restyle for 4:3 aspect
+    // let WIDTH = window.innerWidth;
+    // let HEIGHT = window.innerHeight;
+    // let FLOOR = Math.floor(HEIGHT * FLOOR_RATIO);
+    let WIDTH = 800;
+    let HEIGHT = 600;
     let FLOOR = Math.floor(HEIGHT * FLOOR_RATIO);
 
     // Timing & Slow Mo
@@ -38,8 +43,51 @@ function game() {
     let p2IsAI = true; // Default to AI
 
     // --- DOM ELEMENTS ---
-    const canvas = document.getElementById('game');
-    const ctx = canvas.getContext('2d');
+    let gameContainer = null;
+    let canvas = null;
+    // const canvas = document.getElementById('game');
+    let ctx = null;
+    // const ctx = canvas.getContext('2d');
+
+    // Inject CRT Styles and Structure
+    function setupCRT() {
+        // 2. Create Container Structure
+        gameContainer = document.createElement('div');
+        gameContainer.id = 'game-container';
+
+        // 3. Move Existing Canvas or Create New
+        let oldCanvas = document.getElementById('game');
+        if (oldCanvas) {
+            oldCanvas.parentNode.removeChild(oldCanvas);
+            canvas = oldCanvas;
+        } else {
+            canvas = document.createElement('canvas');
+            canvas.id = 'game';
+        }
+
+        // FIX: Set internal resolution matches game logic
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+
+        // 4. Assemble
+        // Structure: Container -> [Canvas, UI Layers, CRT Effects]
+        gameContainer.appendChild(canvas);
+
+        // Add Effect Layers
+        const scanlines = document.createElement('div');
+        scanlines.className = 'scanlines';
+        gameContainer.appendChild(scanlines);
+
+        const tube = document.createElement('div');
+        tube.className = 'tube-overlay';
+        gameContainer.appendChild(tube);
+
+        document.body.appendChild(gameContainer);
+        ctx = canvas.getContext('2d');
+    }
+
+    // Call setup immediately
+    setupCRT();
 
     const overlay = document.createElement('div'); // For Title/Select screens
     overlay.className = 'overlay';
@@ -48,7 +96,8 @@ function game() {
     panel.className = 'panel';
 
     overlay.appendChild(panel);
-    document.body.appendChild(overlay);
+    gameContainer.appendChild(overlay);
+    // document.body.appendChild(overlay);
 
     // --- ASSETS & DATA ---
     const images = {};
@@ -158,7 +207,7 @@ function game() {
             </div>
             ${hudPlayer('p2')}
         `;
-        document.body.appendChild(hud);
+        gameContainer.appendChild(hud);
 
         // Cache references
         hud.els = {
@@ -176,7 +225,7 @@ function game() {
 
     function destroyHUD() {
         if (hud) {
-            document.body.removeChild(hud);
+            hud.parentNode.removeChild(hud);
             hud = null;
         }
     }
@@ -233,7 +282,7 @@ function game() {
                     <p id="sub-text"></p>
                 </div>
             `;
-            document.body.appendChild(overlay);
+            gameContainer.appendChild(overlay);
         }
 
         // Update HTML Content
@@ -739,7 +788,8 @@ function game() {
             // Actually, let splash run on real time so it's snappy even in slow mo
             if (canvasSplash.timer <= 0) canvasSplash = null;
             else {
-                canvasSplash.scale += (1 - canvasSplash.scale) * 0.05;
+                canvasSplash.scale = (canvasSplash.scale || 0) + (1 - (canvasSplash.scale || 0)) * 0.05;
+                // canvasSplash.scale += (1 - canvasSplash.scale) * 0.05;
                 canvasSplash.confetti.forEach(c => {
                     c.x += c.vx; c.y += c.vy; c.vy += 0.5; c.life -= 0.01;
                 });
@@ -899,7 +949,7 @@ function game() {
         destroyHUD();
         gameState = 'title';
         panel.innerHTML = `
-        <img src="assets/images/logo.png" class="logo"/>
+        <img src="assets/images/logo.png" alt="Grupon Fighter" class="logo"/>
         <h1 class="hidden">${texts.titleScreen.title}</h1>
         <h2 class="title data-content="${texts.titleScreen.subtitle}">${texts.titleScreen.subtitle}</h2>
         <p class="splash-default insertCoin blink">${texts.titleScreen.insertCoin}</p>
@@ -955,7 +1005,7 @@ function game() {
 
         // Character selection
         const makeCharBox = (playerSide) => {
-            return `<div class="char-box">
+            return `<div class="char-box ${playerSide}">
                 <span class="splash-default">
                     ${texts.characterSelection.player} ${playerSide === 'p1' ? 1 : 2}
                     </span>
@@ -967,26 +1017,27 @@ function game() {
         // Render character selection panel
         panel.innerHTML = `
             <h1 class="title">${texts.characterSelection.title}</h1>
+
+            <div class="shared-grid">
+                ${makeCharOpts()}
+            </div>
             
             <div class="match-settings">
                 ${makeCharBox('p1')}
                  <div class="vs">
-                    <img src="./assets/images/vs.png"/>
+                    <img src="./assets/images/vs.png" alt="vs"/>
                     <div class="oponent-type">
-                        <div class="content">${texts.characterSelection.oponent.mode}</div>
+                        <!-- <div class="content">${texts.characterSelection.oponent.mode}</div> -->
                         <button
                             class="${p2IsAI && 'ai'}"
                             onclick="window.toggleAI()"
+
                         >
                             ${texts.characterSelection.oponent[p2IsAI ? 'ai' : 'human']}
                         </button>
                     </div>
                 </div>
                 ${makeCharBox('p2')}
-            </div>
-
-            <div class="shared-grid">
-                ${makeCharOpts()}
             </div>
 
             <p class="splash-default blink">
@@ -1065,12 +1116,15 @@ function game() {
 
         panel.innerHTML = `
             <h1 class="title">${texts.stageSelection.title}</h1>
-            <div class="splash-default">
-                <p>${texts.stageSelection.subtitle}</p>
-            </div>
+            
             <div class="stage-box">
                 ${makeStageOpts()}
             </div>
+
+            <div class="splash-default">
+                <p>${texts.stageSelection.subtitle}</p>
+            </div>
+            
             <p class="splash-default blink">${texts.stageSelection.pressEnter}</p>
         `;
 
@@ -1117,18 +1171,32 @@ function game() {
         return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
     }
 
-    // Check if there is a window resizing and adjust canvas
     function resizeCanvas() {
-        WIDTH = window.innerWidth;
-        HEIGHT = window.innerHeight;
-        FLOOR = Math.floor(HEIGHT * FLOOR_RATIO);
+        // const aspect = WIDTH / HEIGHT;
+        const availW = window.innerWidth;
+        const availH = window.innerHeight * 0.9;
 
-        canvas.width = WIDTH;
-        canvas.height = HEIGHT;
+        // Calculate the largest scale factor that fits the screen
+        let scale = Math.min(
+            availW / WIDTH,
+            availH / HEIGHT
+        );
 
-        // keep CSS sized to full viewport
-        canvas.style.width = WIDTH + 'px';
-        canvas.style.height = HEIGHT + 'px';
+        // Calculate new display size
+        const newW = Math.floor(WIDTH * scale);
+        const newH = Math.floor(HEIGHT * scale);
+
+        // Apply size to the CONTAINER (CSS scaling), not the internal canvas
+        if (gameContainer) {
+            gameContainer.style = `
+            --scale: ${scale};
+            width: ${newW}px;
+            height: ${newH}px;
+            `;
+
+            // gameContainer.style.width = `${newW}px`;
+            // gameContainer.style.height = `${newH}px`;
+        }
     }
 
     window.addEventListener('resize', resizeCanvas);
