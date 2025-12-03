@@ -5,18 +5,28 @@
 @import "hud.css";
 @import "splash.css";
 @import "stageSelection.css";
+@import "crt.css";
 
 html,
 body {
 	margin: 0;
 	overflow: hidden;
-	font-family: monospace, sans-serif;
+	font-family: "Tiny 5", monospace, sans-serif;
 	text-transform: uppercase;
 	color: var(--text);
 }
 
+body {
+	justify-content: center;
+	display: flex;
+	height: 100vh;
+	/* background-color: var(--body); */
+}
+
 canvas {
 	display: block;
+	width: 100%;
+	height: 100%;
 }
 
 a {
@@ -26,11 +36,6 @@ a {
 
 /* Overlay */
 .overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
 	background: var(--bg);
 	display: flex;
 	justify-content: center;
@@ -40,34 +45,37 @@ a {
 }
 
 .panel {
-	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
 }
 
-/* Stylized content */
-
+/* Stylized content
+https://codepen.io/fogolin/pen/GgZdOJr
 .pixelated-element {
 	filter: url(#pixelate);
 }
+*/
 
 /* General utilities */
 .hidden {
 	display: none;
 }
 
-.grid-2 {
+.grid {
 	display: grid;
 	grid-template-columns: 1fr 1fr;
-	gap: 10px;
+	gap: calc(2 * var(--10px) * var(--scale));
 }
 
 /* Title screen */
 .logo {
-	width: 30em;
-	margin-bottom: 1.1em;
+	width: calc(36 * var(--10px) * var(--scale));
+	margin: calc(var(--16px) * var(--scale)) 0;
 }
 
 .title {
-	/* color: #ffcc00; */
 	background: var(--title-gradient-start);
 	background: linear-gradient(
 		to bottom,
@@ -77,25 +85,18 @@ a {
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
-	-webkit-text-stroke: 1px var(--title-border);
-	filter: drop-shadow(0px 4px var(--title-shadow));
+	-webkit-text-stroke: calc(var(--1px) * var(--scale)) var(--title-border);
+	filter: drop-shadow(0 calc(var(--4px) * var(--scale)) var(--title-shadow));
 
-	font-size: 4em;
+	font-size: calc(4 * var(--16px) * var(--scale));
 	font-weight: 400;
 	font-family: "Jersey 15", monospace, sans-serif;
 
-	margin-bottom: 1.1em;
+	margin: calc(2 * var(--10px) * var(--scale));
 }
 
-/* .title::after {
-	content: attr(data-content);
-	position: absolute;
-	inset: 0 0 0 0;
-	filter: drop-shadow(0px 4px red);
-} */
-
 .splash-default {
-	font-size: 1.5em;
+	font-size: calc(2 * var(--12px) * var(--scale));
 
 	background: var(--text-gradient-start);
 	background: linear-gradient(
@@ -106,14 +107,17 @@ a {
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
-	filter: drop-shadow(2px 4px var(--text-shadow));
+	filter: drop-shadow(
+		calc(var(--2px) * var(--scale)) calc(var(--4px) * var(--scale))
+			var(--text-shadow)
+	);
 }
 
 .container {
 	display: flex;
 	justify-content: center;
-	gap: 40px;
-	margin-bottom: 10px;
+	gap: calc(4 * var(--10px) * var(--scale));
+	margin-bottom: calc(var(--10px) * var(--scale));
 	text-align: left;
 }
 

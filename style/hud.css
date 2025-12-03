@@ -1,17 +1,17 @@
 /* HUD */
 #game-hud {
-	position: fixed;
-	left: 50%;
-	top: 10px;
-	transform: translateX(-50%);
-	width: min(1200px, 94%);
+	position: absolute !important;
+	width: 100% !important;
+	height: 100% !important;
+	top: 0.5em;
+	left: 0;
 	z-index: 100;
 	pointer-events: none;
 	font-family: "Jersey 10", monospace, sans-serif;
 	color: white;
 	display: flex;
-	justify-content: space-between;
-	align-items: center;
+	justify-content: space-around;
+	align-items: flex-start;
 	text-shadow: 2px 2px 0 #000;
 }
 

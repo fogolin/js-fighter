@@ -18,10 +18,6 @@
 	font-family: "Jersey 25", monospace, sans-serif;
 }
 
-.sixtyfour {
-	font-family: "SixtyFour Mono", monospace, sans-serif;
-}
-
 @font-face {
 	font-family: "Tiny 5";
 	font-display: swap;
@@ -63,14 +59,5 @@
 	font-style: normal;
 	font-weight: 400;
 	src: url("../assets/fonts/Jersey_25/jersey-25-v4-latin-regular.woff2")
-		format("woff2");
-}
-
-@font-face {
-	font-family: "SixtyFour Mono";
-	font-display: swap;
-	font-style: normal;
-	font-weight: 400;
-	src: url("../assets/fonts/Sixtyfour/sixtyfour-v3-latin-regular.woff2")
 		format("woff2");
 }

@@ -1,26 +1,69 @@
 :root {
+	/* Scale and Sizing */
+	--scale: 1;
+	--width: 800px;
+	--height: 600px;
+	--unit: 1rem;
+
+	--1px: 0.0625rem;
+	--2px: 0.125rem;
+	--4px: 0.25rem;
+	--8px: 0.5rem;
+	--8px: 0.5rem;
+	--10px: 0.625rem;
+	--12px: 0.75rem;
+	--16px: 1rem;
+
+	/* General UI Colors */
 	--bg: rgb(6, 11, 22);
 	--ui: rgb(19, 21, 42);
-	--accent: #f25;
+	--accent: rgb(255, 34, 85);
 
-	--title-gradient-start: #5c92ed;
-	--title-gradient-end: #eeffee;
+	--body: rgb(17, 17, 17);
+	--body-bg: rgba(18, 16, 16, 0.1);
+
+	--title-gradient-start: rgb(92, 146, 237);
+	--title-gradient-end: rgb(238, 255, 238);
 	--title-border: rgb(9, 10, 46);
 	--title-shadow: rgb(34, 38, 255);
 
-	--text: #efe;
-	--text-gradient-start: #ebb706;
-	--text-gradient-end: #f65d00;
+	--text: rgb(238, 255, 238);
+	--text-gradient-start: rgb(235, 183, 6);
+	--text-gradient-end: rgb(246, 93, 0);
 	--text-border: rgb(9, 10, 46);
 	--text-shadow: rgb(12, 14, 148);
 
-	--splash-gradient-start: #ebb706;
-	--splash-gradient-end: #f65d00;
+	--splash-gradient-start: rgb(235, 183, 6);
+	--splash-gradient-end: rgb(246, 93, 0);
 	--splash-border: rgb(9, 10, 46);
 	--splash-shadow: rgb(12, 14, 148);
 
-	--bar-bg: #333a;
-	--bar-p1: #4ad04a;
-	--bar-p2: #4ad04a;
-	/* --bar-p2: #f46; */
+	/* HUD */
+	--bar-bg: rgba(51, 51, 51, 0.667);
+	--bar-p1: rgb(74, 208, 74);
+	--bar-p2: rgb(74, 208, 74);
+
+	/* Basic colors */
+	--white: rgb(255, 255, 255);
+
+	--gray-0: rgb(170, 170, 170);
+	--gray-1: rgb(34, 34, 34);
+	--gray-2: rgb(68, 68, 68);
+
+	--black-0: rgb(0, 0, 0);
+	--black-00: rgba(0, 0, 0, 0);
+	--black-20: rgba(0, 0, 0, 0.2);
+	--black-60: rgba(0, 0, 0, 0.6);
+	--black-80: rgba(0, 0, 0, 0.8);
+
+	/* Players */
+	--color-p1: #6ad;
+	--color-p1-active: rgba(102, 170, 221, 0.267);
+
+	--color-p2: #da8;
+	--color-p2-active: rgba(221, 170, 136, 0.267);
+
+	--shared-card-active: var(--white);
+
+	--badge-text-color: var(--white);
 }
