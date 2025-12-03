@@ -176,8 +176,8 @@ function game() {
     window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
 
     const humanControls = {
-        p1: { left: "arrowleft", right: "arrowright", jump: "arrowup", punch: "k", kick: "l", special: ";" },
-        p2: { left: "a", right: "d", jump: "w", punch: "f", kick: "g", special: "h" }
+        p1: { left: "a", right: "d", jump: "w", punch: "f", kick: "g", special: "h" },
+        p2: { left: "arrowleft", right: "arrowright", jump: "arrowup", punch: "k", kick: "l", special: ";" }
     };
 
     // --- DYNAMIC HUD SYSTEM ---
@@ -1169,22 +1169,22 @@ function game() {
         // HTML Structure for GameBoy Layout
         controls.innerHTML = `
             <div class="dpad">
-                <div class="control-btn dpad-btn dpad-up" data-key="ArrowUp">▲</div>
-                <div class="control-btn dpad-btn dpad-left" data-key="ArrowLeft">◀</div>
-                <div class="control-btn dpad-btn dpad-right" data-key="ArrowRight">▶</div>
-                <div class="control-btn dpad-btn dpad-down" data-key="ArrowDown">▼</div>
+                <div class="control-btn dpad-btn dpad-up" data-key="w">▲</div>
+                <div class="control-btn dpad-btn dpad-left" data-key="a">◀</div>
+                <div class="control-btn dpad-btn dpad-right" data-key="d">▶</div>
+                <div class="control-btn dpad-btn dpad-down" data-key="s">▼</div>
             </div>
             
             <div class="middle-btns">
-                <div class="control-btn pill-btn" data-key=" ">SELECT</div>
-                <div class="control-btn pill-btn" data-key="Enter">START</div>
+                <div class="control-btn pill-btn" data-key=" ">${texts.controller.select}</div>
+                <div class="control-btn pill-btn" data-key="Enter">${texts.controller.start}</div>
             </div>
 
             <div class="action-btns">
-                <div class="control-btn big-btn btn-y" data-key=";">y</div>
-                <div class="control-btn big-btn btn-x" data-key=";">X</div>
-                <div class="control-btn big-btn btn-b" data-key="l">B</div>
-                <div class="control-btn big-btn btn-a" data-key="k">A</div>
+                <div class="control-btn big-btn btn-y" data-key="h">y</div>
+                <div class="control-btn big-btn btn-x" data-key="g">X</div>
+                <div class="control-btn big-btn btn-b" data-key="w">B</div>
+                <div class="control-btn big-btn btn-a" data-key="f">A</div>
             </div>
         `;
 
