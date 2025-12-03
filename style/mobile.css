@@ -16,6 +16,12 @@
 	#mobile-controls {
 		display: flex;
 	}
+
+	/* Add margins to represent a mobile screen */
+	#game-container {
+		max-width: 95%;
+		top: calc(0.75 * var(--16px));
+	}
 }
 
 /* Shared Button Styles */
@@ -90,6 +96,7 @@
 	border-radius: var(--16px);
 	font-size: var(--12px);
 	letter-spacing: var(--1px);
+	text-transform: uppercase;
 	background: var(--gray-1);
 	transform: rotate(-15deg); /* Classic slanted look */
 }

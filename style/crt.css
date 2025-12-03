@@ -9,7 +9,7 @@ https://codepen.io/lbebber/pen/XJRdrV/
 	height: var(--height); /* Default, set by JS */
 
 	position: relative;
-	top: calc(var(--16px) * var(--scale));
+	/* top: calc(var(--16px) * var(--scale)); */
 	background: var(--body);
 	box-shadow: 0 0 calc(4 * var(--16px) * var(--scale)) var(--black-80);
 	overflow: hidden;

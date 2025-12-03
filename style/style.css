@@ -20,7 +20,8 @@ body {
 body {
 	display: flex;
 	flex-direction: column;
-	/* justify-content: center; */
+	justify-content: center;
+	align-items: center;
 	height: 100vh;
 	background-color: var(--body);
 }
@@ -34,6 +35,13 @@ canvas {
 a {
 	text-decoration: none;
 	color: var(--accent);
+}
+
+/* Deals with mobile screen positioning*/
+@media (max-width: 800px), (hover: none) {
+	body {
+		justify-content: flex-start;
+	}
 }
 
 /* Overlay */

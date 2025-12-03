@@ -34,6 +34,10 @@ export const language = {
         wins: "vence!",
         draw: "Empate",
         timeOver: "Tempo esgotado!"
+    },
+    controller: {
+        select: "Select",
+        start: "Start"
     }
 }
 
