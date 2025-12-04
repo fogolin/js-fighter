@@ -29,8 +29,8 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		padding: calc(1.2 * var(--16px)) var(--10px) var(--10px);
-		gap: calc(1.5 * var(--16px));
+		padding: calc(2.2 * var(--16px)) var(--10px) var(--10px);
+		gap: calc(0.5 * var(--16px));
 	}
 
 	/* Add margins to represent a mobile screen */
@@ -253,7 +253,7 @@
 	/* scale: 3; */
 	display: flex;
 	gap: var(--12px);
-	margin: calc(1.5 * var(--16px)) 0 calc(2 * var(--16px));
+	margin: var(--16px) 0 calc(2 * var(--16px));
 	flex-direction: row;
 	padding: calc(2 * var(--10px));
 }
