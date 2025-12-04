@@ -80,7 +80,7 @@ https://codepen.io/fogolin/pen/GgZdOJr
 }
 
 /* Title screen */
-.logo {
+#game-container .logo {
 	width: calc(36 * var(--10px) * var(--scale));
 	margin: calc(var(--16px) * var(--scale)) 0;
 }

@@ -9,7 +9,6 @@
 	--2px: 0.125rem;
 	--4px: 0.25rem;
 	--8px: 0.5rem;
-	--8px: 0.5rem;
 	--10px: 0.625rem;
 	--12px: 0.75rem;
 	--16px: 1rem;
@@ -47,6 +46,10 @@
 
 	/* Basic colors */
 	--white: rgb(255, 255, 255);
+	--white-10: rgba(255, 255, 255, 0.1);
+	--white-20: rgba(255, 255, 255, 0.2);
+	--white-80: rgba(255, 255, 255, 0.8);
+	--white-90: rgba(255, 255, 255, 0.9);
 
 	--gray-0: rgb(170, 170, 170);
 	--gray-1: rgb(34, 34, 34);
@@ -55,6 +58,7 @@
 	--black-0: rgb(0, 0, 0);
 	--black-00: rgba(0, 0, 0, 0);
 	--black-20: rgba(0, 0, 0, 0.2);
+	--black-25: rgba(0, 0, 0, 0.25);
 	--black-40: rgba(0, 0, 0, 0.4);
 	--black-50: rgba(0, 0, 0, 0.5);
 	--black-60: rgba(0, 0, 0, 0.6);
@@ -70,7 +74,46 @@
 	--shared-card-active: var(--white);
 	--badge-text-color: var(--white);
 
-	/* D Pad */
-	--ab-buttons-color: rgba(200, 50, 50, 0.6);
-	--xy-buttons-color: rgba(50, 100, 200, 0.6);
+	/* Console shell */
+	--mobile-console-gradient-start: #b2afb0;
+	--mobile-console-gradient-middle: #eae8e4;
+	--mobile-console-gradient-end: #c0bcb4;
+
+	--mobile-console-logo-color: #f7f5f1;
+	--mobile-console-logo-background: #eae8e4;
+
+	/* Buttons */
+	--screen-gradient-start: #bebbbc;
+	--screen-gradient-middle: #bebdb9;
+	--screen-gradient-end: #979b99;
+
+	/* Buttons */
+	--button-valley-gradient-start: #bebbbc;
+	--button-valley-gradient-middle: #eae8e4;
+	--button-valley-gradient-end: #fffdf8;
+
+	--pill-btn-label: #422a97;
+	--pill-btn-gradient-start: #c0bcd7;
+	--pill-btn-gradient-end: #727075;
+
+	--start-select-gradient-start: #9b9899;
+	--start-select-gradient-middle: #eae8e4;
+	--start-select-gradient-end: #fffdf8;
+
+	/* SNES color scheme*/
+	--button-a-b-color-start: #4e0fb3;
+	--button-a-b-color-end: #340164;
+	--button-a-b-color-spark: #834fd7;
+
+	--button-x-y-color-start: #9180cc;
+	--button-x-y-color-end: #422a97;
+	--button-x-y-color-spark: #aa9cdc;
+
+	/* GameBoy color scheme*/
+	/* --button-a-b-color-start: #b30f42;
+	--button-a-b-color-end: #640116;
+	--button-a-b-color-spark: #d74f73; */
+
+	--button-label-a-b: #422a97;
+	--button-label-x-y: var(--white);
 }

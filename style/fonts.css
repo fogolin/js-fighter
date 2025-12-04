@@ -18,6 +18,14 @@
 	font-family: "Jersey 25", monospace, sans-serif;
 }
 
+.orbitron {
+	font-family: "Orbitron", monospace, sans-serif;
+}
+
+.orbitron800 {
+	font-family: "Orbitron 800", monospace, sans-serif;
+}
+
 @font-face {
 	font-family: "Tiny 5";
 	font-display: swap;
@@ -59,5 +67,23 @@
 	font-style: normal;
 	font-weight: 400;
 	src: url("../assets/fonts/Jersey_25/jersey-25-v4-latin-regular.woff2")
+		format("woff2");
+}
+
+@font-face {
+	font-family: "Orbitron";
+	font-display: swap;
+	font-style: normal;
+	font-weight: 400;
+	src: url("../assets/fonts/Orbitron/orbitron-v35-latin-regular.woff2")
+		format("woff2");
+}
+
+@font-face {
+	font-family: "Orbitron 800";
+	font-display: swap;
+	font-style: normal;
+	font-weight: 800;
+	src: url("../assets/fonts/Orbitron/orbitron-v35-latin-800.woff2")
 		format("woff2");
 }

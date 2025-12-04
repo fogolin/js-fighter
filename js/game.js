@@ -2,6 +2,7 @@
 // Entry point: initializes modules, UI, and starts loop
 import language from './language.js';
 import stages from './stages.js';
+import mobileControls from './mobile/controller.js';
 
 function game() {
     // --- CONFIGURATION ---
@@ -45,9 +46,7 @@ function game() {
     // --- DOM ELEMENTS ---
     let gameContainer = null;
     let canvas = null;
-    // const canvas = document.getElementById('game');
     let ctx = null;
-    // const ctx = canvas.getContext('2d');
 
     // Inject CRT Styles and Structure
     function setupCRT() {
@@ -97,7 +96,6 @@ function game() {
 
     overlay.appendChild(panel);
     gameContainer.appendChild(overlay);
-    // document.body.appendChild(overlay);
 
     // --- ASSETS & DATA ---
     const images = {};
@@ -1162,177 +1160,8 @@ function game() {
     }
 
     // --- MOBILE CONTROLS SETUP ---
-    // function setupMobileControls() {
-    //     const controls = document.createElement('div');
-    //     controls.id = 'mobile-controls';
-
-    //     // HTML Structure for GameBoy Layout
-    //     controls.innerHTML = `
-    //         <div class="dpad">
-    //             <div class="control-btn dpad-btn dpad-up" data-key="w">▲</div>
-    //             <div class="control-btn dpad-btn dpad-left" data-key="a">◀</div>
-    //             <div class="control-btn dpad-btn dpad-right" data-key="d">▶</div>
-    //             <div class="control-btn dpad-btn dpad-down" data-key="s">▼</div>
-    //         </div>
-
-    //         <div class="middle-btns">
-    //             <div class="control-btn pill-btn" data-key=" ">${texts.controller.select}</div>
-    //             <div class="control-btn pill-btn" data-key="Enter">${texts.controller.start}</div>
-    //         </div>
-
-    //         <div class="action-btns">
-    //             <div class="control-btn big-btn btn-y" data-key="h">y</div>
-    //             <div class="control-btn big-btn btn-x" data-key="g">X</div>
-    //             <div class="control-btn big-btn btn-b" data-key="w">B</div>
-    //             <div class="control-btn big-btn btn-a" data-key="f">A</div>
-    //         </div>
-    //     `;
-
-    //     document.body.appendChild(controls);
-
-    //     // --- TOUCH LOGIC ---
-    //     // We bind touchstart/end to update the global 'keys' object directly
-    //     const buttons = controls.querySelectorAll('.control-btn');
-
-    //     buttons.forEach(btn => {
-    //         const key = btn.dataset.key;
-
-    //         const triggerEvent = (type) => {
-    //             // Dispatch a real keyboard event
-    //             const event = new KeyboardEvent(type, {
-    //                 key: key,
-    //                 bubbles: true,
-    //                 cancelable: true
-    //             });
-    //             window.dispatchEvent(event);
-    //         };
-
-    //         const press = (e) => {
-    //             e.preventDefault();
-    //             btn.classList.add('pressed');
-    //             triggerEvent('keydown'); // Simulate Key Down
-    //             if (navigator.vibrate) navigator.vibrate(10);
-    //         };
-
-    //         const release = (e) => {
-    //             e.preventDefault();
-    //             btn.classList.remove('pressed');
-    //             triggerEvent('keyup'); // Simulate Key Up
-    //         };
-
-    //         // Touch Listeners
-    //         btn.addEventListener('touchstart', press, { passive: false });
-    //         btn.addEventListener('touchend', release, { passive: false });
-
-    //         // Mouse Listeners (for testing)
-    //         btn.addEventListener('mousedown', press);
-    //         btn.addEventListener('mouseup', release);
-    //         btn.addEventListener('mouseleave', release);
-    //     });
-    // }
-
-    // --- MOBILE CONTROLS SETUP ---
-    function setupMobileControls() {
-        const controls = document.createElement('div');
-        controls.id = 'mobile-controls';
-
-        // HTML Structure (Unchanged)
-        controls.innerHTML = `
-            <div class="dpad">
-                <div class="control-btn dpad-btn dpad-up" data-key="w">&#9650;</div>
-                <div class="control-btn dpad-btn dpad-left" data-key="a">&#9668;</div>
-                <div class="control-btn dpad-btn dpad-right" data-key="d">&#9658;</div>
-                <div class="control-btn dpad-btn dpad-down" data-key="s">&#9660;</div>
-            </div>
-            
-            <div class="middle-btns">
-                <div class="control-btn pill-btn" data-key=" ">${texts.controller.select}</div>
-                <div class="control-btn pill-btn" data-key="Enter">${texts.controller.start}</div>
-            </div>
-
-            <div class="action-btns">
-                <div class="control-btn big-btn btn-y" data-key="h">y</div>
-                <div class="control-btn big-btn btn-x" data-key="g">X</div>
-                <div class="control-btn big-btn btn-b" data-key="w">B</div>
-                <div class="control-btn big-btn btn-a" data-key="f">A</div>
-            </div>
-        `;
-
-        document.body.appendChild(controls);
-
-        // --- NEW MULTI-TOUCH & SLIDE LOGIC ---
-        // We track which keys are currently "held" by virtual fingers
-        let heldKeys = new Set();
-
-        const triggerEvent = (key, type) => {
-            const event = new KeyboardEvent(type, {
-                key: key,
-                bubbles: true,
-                cancelable: true
-            });
-            window.dispatchEvent(event);
-        };
-
-        const handleTouch = (e) => {
-            // Prevent default browser zooming/scrolling behavior
-            if (e.type !== 'touchend') e.preventDefault();
-
-            // 1. Identify which keys should be active RIGHT NOW based on finger positions
-            const currentFrameKeys = new Set();
-            const activeElements = new Set();
-
-            // Loop through every finger currently touching the screen
-            for (let i = 0; i < e.touches.length; i++) {
-                const touch = e.touches[i];
-
-                // key magic: Find the element under this specific finger
-                const el = document.elementFromPoint(touch.clientX, touch.clientY);
-
-                if (el && el.classList.contains('control-btn')) {
-                    const key = el.dataset.key;
-                    currentFrameKeys.add(key);
-                    activeElements.add(el);
-
-                    // Visual feedback
-                    el.classList.add('pressed');
-                }
-            }
-
-            // 2. Diff Logic: Determine what changed since last frame
-
-            // A. Keys that were held but are NO LONGER under a finger -> RELEASE
-            heldKeys.forEach(key => {
-                if (!currentFrameKeys.has(key)) {
-                    triggerEvent(key, 'keyup');
-                    // Find the button with this key to remove visual style
-                    // (We querySelector because elementFromPoint might not find it anymore)
-                    const btn = controls.querySelector(`[data-key="${key}"]`);
-                    if (btn) btn.classList.remove('pressed');
-                }
-            });
-
-            // B. Keys that are now under a finger but weren't before -> PRESS
-            currentFrameKeys.forEach(key => {
-                if (!heldKeys.has(key)) {
-                    triggerEvent(key, 'keydown');
-                    if (navigator.vibrate) navigator.vibrate(10);
-                }
-            });
-
-            // 3. Update state for next frame
-            heldKeys = currentFrameKeys;
-        };
-
-        // Attach listeners to the CONTAINER, not individual buttons
-        // This allows dragging fingers between buttons
-        controls.addEventListener('touchstart', handleTouch, { passive: false });
-        controls.addEventListener('touchmove', handleTouch, { passive: false });
-        controls.addEventListener('touchend', handleTouch, { passive: false });
-        controls.addEventListener('touchcancel', handleTouch, { passive: false });
-    }
-
     // Initialize controls
-    setupMobileControls();
+    mobileControls(texts);
 
     // --- UTILS ---
     function roundedRect(ctx, x, y, w, h, r) {
