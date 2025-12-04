@@ -1,5 +1,9 @@
 const innerHTML = (texts) => {
     return `
+        <div class="logo">
+            <span>Fogolin System</span>
+        </div>
+        
         <div class="controller">
             <div class="cross-btns">
                 <div class="spike"></div>
@@ -57,10 +61,6 @@ const innerHTML = (texts) => {
             <div class="control-btn pill-btn start" data-key="Enter" data-text="${texts.controller.start}">
                 <span></span>
             </div>
-        </div>
-
-        <div class="logo">
-            <span>Fogolin System</span>
         </div>
     `;
 }
